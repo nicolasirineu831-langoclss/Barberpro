@@ -1,0 +1,183 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   BarberPro — Design System
+   Camada única de tokens e componentes, usada pelo site do cliente, pelo painel
+   do dono e pela tela de acesso. Carrega por último: refina sem reescrever o HTML.
+
+   Direção visual (a partir das referências):
+   - Fundo grafite quase preto, cards em camadas, bordas finas.
+   - Dourado como cor de ação e de marca; champanhe só para destaque (hover, foco).
+   - Títulos em serifa (Playfair Display), textos e controles em sans (DM Sans).
+   - "Eyebrow" pequeno e caixa-alta acima de títulos, para hierarquia clara.
+   - Movimento curto e discreto; nada que atrapalhe o desempenho.
+
+   Para personalizar uma barbearia: altere só os tokens --ds-brand-* abaixo.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root{
+  /* Marca (personalizável por barbearia) */
+  --ds-brand: #C9A84C;
+  --ds-brand-hi: #E8C96B;
+  --ds-brand-lo: #A07830;
+
+  /* Superfícies */
+  --ds-bg: #0B0B0C;
+  --ds-surface: #131315;
+  --ds-card: #18181B;
+  --ds-card-hi: #1F1F24;
+  --ds-border: rgba(255,255,255,.08);
+  --ds-border-strong: color-mix(in srgb, var(--ds-brand) 40%, transparent);
+
+  /* Texto */
+  --ds-text: #F2EFEA;
+  --ds-text-2: #A8A29A;
+  --ds-text-3: #6F6A63;
+
+  /* Estados */
+  --ds-success: #3FB97A;
+  --ds-warning: #E0A93B;
+  --ds-danger: #E05252;
+  --ds-info: #5B9BD5;
+
+  /* Escala de espaçamento (4px) */
+  --ds-s1: 4px; --ds-s2: 8px; --ds-s3: 12px; --ds-s4: 16px;
+  --ds-s5: 24px; --ds-s6: 32px; --ds-s7: 48px;
+
+  /* Raios */
+  --ds-r-sm: 10px; --ds-r-md: 14px; --ds-r-lg: 20px; --ds-r-pill: 999px;
+
+  /* Sombras (discretas) */
+  --ds-shadow-1: 0 1px 2px rgba(0,0,0,.35);
+  --ds-shadow-2: 0 14px 34px -16px rgba(0,0,0,.7);
+  --ds-shadow-focus: 0 0 0 3px color-mix(in srgb, var(--ds-brand) 28%, transparent);
+
+  /* Movimento */
+  --ds-ease: cubic-bezier(.2,.7,.2,1);
+  --ds-dur: 220ms;
+
+  /* Tokens que o restante do CSS já usa: apontam para o sistema novo */
+  --gold: var(--ds-brand);
+  --gold-light: var(--ds-brand-hi);
+  --gold-dark: var(--ds-brand-lo);
+  --bg: var(--ds-bg);
+  --bg2: var(--ds-surface);
+  --bg3: var(--ds-card);
+  --card: var(--ds-card);
+  --border: var(--ds-border);
+  --text: var(--ds-text);
+  --text2: var(--ds-text-2);
+  --text3: var(--ds-text-3);
+  --radius: var(--ds-r-lg);
+}
+
+/* Tema claro: mesmos papéis, cores invertidas */
+[data-theme="light"]{
+  --ds-bg: #F7F4EE;
+  --ds-surface: #FFFFFF;
+  --ds-card: #FFFFFF;
+  --ds-card-hi: #FBF8F2;
+  --ds-border: rgba(0,0,0,.09);
+  --ds-text: #1A1510;
+  --ds-text-2: #5E574F;
+  --ds-text-3: #8A8279;
+  --ds-brand: #A07830;
+  --ds-brand-hi: #C9A84C;
+  --ds-brand-lo: #7A5A22;
+}
+
+/* ── Tipografia ───────────────────────────────────────────────────────────── */
+.ds-eyebrow{
+  display:inline-flex;align-items:center;gap:var(--ds-s2);
+  font-size:11.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ds-brand);
+}
+.ds-eyebrow::before{content:'';width:18px;height:1px;background:currentColor;opacity:.8}
+h1,h2,h3{text-wrap:balance}
+
+/* ── Botões ───────────────────────────────────────────────────────────────── */
+.btn-submit,
+.nav-btn.primary{
+  min-height:48px;border-radius:var(--ds-r-md);
+  background:linear-gradient(180deg,var(--ds-brand-hi),var(--ds-brand) 55%,var(--ds-brand-lo));
+  color:#0B0B0C;font-weight:600;letter-spacing:.01em;border:0;
+  box-shadow:0 1px 0 rgba(255,255,255,.25) inset, 0 8px 22px -10px color-mix(in srgb,var(--ds-brand) 70%,transparent);
+  transition:transform var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease), filter var(--ds-dur);
+}
+.btn-submit:hover:not(:disabled),
+.nav-btn.primary:hover{transform:translateY(-1px);filter:brightness(1.04);
+  box-shadow:0 1px 0 rgba(255,255,255,.25) inset, 0 14px 30px -12px color-mix(in srgb,var(--ds-brand) 80%,transparent)}
+.btn-submit:active:not(:disabled),
+.nav-btn.primary:active{transform:translateY(0) scale(.985)}
+.btn-submit:disabled{opacity:.42;cursor:not-allowed;box-shadow:none}
+.btn-submit:focus-visible,.nav-btn:focus-visible,.status-btn:focus-visible,.icon-btn:focus-visible,
+.service-card:focus-visible,.barber-card:focus-visible,.form-input:focus-visible{outline:none;box-shadow:var(--ds-shadow-focus)}
+
+.nav-btn.ghost{border:1px solid var(--ds-border);background:transparent;color:var(--ds-text);
+  transition:border-color var(--ds-dur) var(--ds-ease), color var(--ds-dur)}
+.nav-btn.ghost:hover{border-color:var(--ds-brand);color:var(--ds-brand-hi)}
+
+/* Áreas de toque confortáveis no celular (mínimo 44px) */
+@media (pointer:coarse){
+  .nav-btn,.icon-btn,.status-btn,.lang-btn,.cal-nav-btn{min-height:44px;min-width:44px}
+}
+
+/* ── Campos de formulário ─────────────────────────────────────────────────── */
+.form-input{
+  min-height:48px;border-radius:var(--ds-r-md);
+  background:var(--ds-surface);border:1px solid var(--ds-border);color:var(--ds-text);
+  transition:border-color var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease);
+}
+.form-input:hover{border-color:color-mix(in srgb,var(--ds-brand) 30%,transparent)}
+.form-input:focus{outline:none;border-color:var(--ds-brand);box-shadow:var(--ds-shadow-focus)}
+.form-label{font-size:12.5px;font-weight:600;letter-spacing:.02em;color:var(--ds-text-2)}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.service-card,.barber-card,.metric-card,.client-card,.svc-card,.review-card,.plan-card,.summary-card{
+  background:linear-gradient(180deg,var(--ds-card-hi),var(--ds-card));
+  border:1px solid var(--ds-border);border-radius:var(--ds-r-lg);box-shadow:var(--ds-shadow-1);
+  transition:transform var(--ds-dur) var(--ds-ease), border-color var(--ds-dur) var(--ds-ease), box-shadow var(--ds-dur) var(--ds-ease);
+}
+@media (hover:hover){
+  .service-card:hover,.barber-card:hover,.svc-card:hover,.client-card:hover{
+    transform:translateY(-2px);border-color:var(--ds-border-strong);box-shadow:var(--ds-shadow-2);
+  }
+}
+.service-price,.svc-card-price{color:var(--ds-brand-hi)}
+
+/* ── Estados (badges) ─────────────────────────────────────────────────────── */
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:var(--ds-r-pill);padding:4px 10px;font-size:12px;font-weight:600;letter-spacing:.02em;
+  border:1px solid transparent}
+.badge.pending{color:var(--ds-warning);background:color-mix(in srgb,var(--ds-warning) 14%,transparent);border-color:color-mix(in srgb,var(--ds-warning) 35%,transparent)}
+.badge.confirmed{color:var(--ds-success);background:color-mix(in srgb,var(--ds-success) 14%,transparent);border-color:color-mix(in srgb,var(--ds-success) 35%,transparent)}
+.badge.done{color:var(--ds-info);background:color-mix(in srgb,var(--ds-info) 14%,transparent);border-color:color-mix(in srgb,var(--ds-info) 35%,transparent)}
+.badge.cancelled{color:var(--ds-danger);background:color-mix(in srgb,var(--ds-danger) 14%,transparent);border-color:color-mix(in srgb,var(--ds-danger) 35%,transparent)}
+
+/* ── Carregamento ─────────────────────────────────────────────────────────── */
+.ds-skeleton{
+  border-radius:var(--ds-r-sm);
+  background:linear-gradient(90deg,var(--ds-card) 0%,var(--ds-card-hi) 50%,var(--ds-card) 100%);
+  background-size:200% 100%;animation:ds-shimmer 1.4s linear infinite;
+}
+@keyframes ds-shimmer{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* ── Movimento: respeita quem pede menos animação ─────────────────────────── */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+
+/* ── Faixa de benefícios (logo abaixo do hero) ───────────────────────────── */
+.ds-pillars{
+  display:grid;grid-template-columns:minmax(0,1fr);gap:var(--ds-s3);
+  max-width:1100px;margin:0 auto;padding:var(--ds-s5) var(--ds-s4);
+}
+@media (min-width:600px){ .ds-pillars{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (min-width:900px){ .ds-pillars{grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--ds-s4)} }
+.ds-pillar{
+  display:flex;gap:var(--ds-s3);align-items:flex-start;padding:var(--ds-s4);
+  background:var(--ds-surface);border:1px solid var(--ds-border);border-radius:var(--ds-r-lg);
+}
+.ds-pillar-ico{
+  flex:0 0 40px;height:40px;border-radius:12px;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--ds-brand) 14%,transparent);color:var(--ds-brand-hi);
+}
+.ds-pillar b{display:block;font-size:14.5px;font-weight:600;color:var(--ds-text);margin-bottom:2px}
+.ds-pillar span:not(.ds-pillar-ico){font-size:13px;color:var(--ds-text-2);line-height:1.5}

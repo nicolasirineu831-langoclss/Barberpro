@@ -1,0 +1,2120 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BarberPro Admin — Painel do Empresário</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta http-equiv="Content-Security-Policy" content="
+  default-src 'self';
+  script-src 'self' 'unsafe-inline' https://www.gstatic.com https://www.google.com https://www.googleapis.com https://apis.google.com;
+  style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+  font-src 'self' https://fonts.gstatic.com;
+  img-src 'self' data: https:;
+  connect-src 'self' https://barberpro-suaempresa.firebaseapp.com https://*.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://www.google.com https://content-firebaseappcheck.googleapis.com https://firebaseinstallations.googleapis.com;
+  frame-src https://www.google.com https://barberpro-suaempresa.firebaseapp.com;
+  base-uri 'self';
+  form-action 'self';
+  upgrade-insecure-requests;
+">
+<link rel="manifest" href="manifest-admin.json">
+<meta name="theme-color" content="#C9A84C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BarberPro Dono">
+<link rel="apple-touch-icon" href="icons/icon-admin-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C96B;
+  --gold-dark: #A07830;
+  --bg: #0A0A0A;
+  --bg2: #121212;
+  --bg3: #1A1A1A;
+  --card: #161616;
+  --border: #252525;
+  --text: #F0EDE8;
+  --text2: #9A9590;
+  --text3: #5A5550;
+  --success: #4CAF7D;
+  --danger: #E05252;
+  --info: #5294E0;
+  --warning: #E0A052;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.5);
+  --sidebar: 260px;
+}
+[data-theme="light"] {
+  --bg: #F0EBE0;
+  --bg2: #E8E0D0;
+  --bg3: #DDD5C5;
+  --card: #FFFFFF;
+  --border: #D0C8B8;
+  --text: #1A1510;
+  --text2: #5A5048;
+  --text3: #8A8078;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:var(--gold-dark);border-radius:3px}
+
+/* ── AUTH SCREEN ─────────────────────────────────── */
+#authScreen{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding:24px;position:relative;overflow:hidden;
+}
+.auth-bg{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 70% at 30% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
+}
+.auth-deco{
+  position:absolute;right:-100px;top:50%;transform:translateY(-50%);
+  font-size:400px;opacity:0.02;user-select:none;pointer-events:none;
+}
+.auth-card{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  width:100%;max-width:480px;padding:40px;position:relative;z-index:1;
+  box-shadow:var(--shadow);
+}
+.auth-logo{
+  text-align:center;margin-bottom:32px;
+}
+.auth-logo-icon{
+  width:72px;height:72px;border-radius:20px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;margin:0 auto 14px;
+}
+.auth-logo-title{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--gold);
+}
+.auth-logo-sub{font-size:13px;color:var(--text3);margin-top:4px}
+.auth-tabs{display:flex;background:var(--bg2);border-radius:10px;padding:4px;margin-bottom:28px}
+.auth-tab{
+  flex:1;padding:10px;text-align:center;border-radius:8px;cursor:pointer;
+  font-size:14px;font-weight:500;color:var(--text2);transition:all .2s;border:none;background:none;
+}
+.auth-tab.active{background:var(--gold);color:#0A0A0A;font-weight:700}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:7px}
+.form-input{
+  width:100%;padding:12px 16px;border-radius:10px;
+  background:var(--bg2);border:1px solid var(--border);
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;
+  transition:all .2s;outline:none;
+}
+.form-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,0.12)}
+.form-input::placeholder{color:var(--text3)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-section{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--gold);margin:20px 0 12px;padding-top:12px;border-top:1px solid var(--border);
+}
+.btn-primary{
+  width:100%;padding:14px;border-radius:10px;
+  background:var(--gold);color:#0A0A0A;
+  font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;
+  border:none;cursor:pointer;transition:all .25s;margin-top:8px;
+}
+.btn-primary:hover{background:var(--gold-light)}
+.back-link{
+  text-align:center;margin-top:20px;font-size:13px;color:var(--text3);
+}
+.back-link a{color:var(--gold);text-decoration:none}
+.back-link a:hover{text-decoration:underline}
+
+/* ── ADMIN LAYOUT ────────────────────────────────── */
+#adminApp{display:none;min-height:100vh}
+.admin-layout{display:flex;min-height:100vh}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar);min-height:100vh;
+  background:var(--card);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;
+  position:fixed;top:0;left:0;z-index:100;
+  transition:transform .3s;
+}
+.sidebar-brand{
+  padding:24px 20px;border-bottom:1px solid var(--border);
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--gold);
+  display:flex;align-items:center;gap:10px;
+}
+.sidebar-brand span{font-size:10px;font-weight:500;color:var(--text3);display:block;font-family:'DM Sans',sans-serif;margin-top:2px}
+.sidebar-nav{flex:1;padding:16px 12px;display:flex;flex-direction:column;gap:4px}
+.nav-item{
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;border-radius:10px;
+  font-size:14px;font-weight:500;color:var(--text2);
+  cursor:pointer;transition:all .2s;border:none;background:none;width:100%;text-align:left;
+}
+.nav-item:hover{background:var(--bg2);color:var(--text)}
+.nav-item.active{background:rgba(201,168,76,0.1);color:var(--gold);border-left:2px solid var(--gold);padding-left:12px}
+.nav-item-icon{font-size:18px;width:22px;text-align:center}
+.nav-badge{
+  margin-left:auto;background:var(--danger);color:#fff;
+  padding:2px 7px;border-radius:100px;font-size:11px;font-weight:700;
+}
+.sidebar-footer{padding:16px 12px;border-top:1px solid var(--border)}
+.admin-info{display:flex;align-items:center;gap:10px;padding:12px}
+.admin-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold),var(--gold-dark));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:#0A0A0A;
+  flex-shrink:0;
+}
+.admin-name{font-size:13px;font-weight:600;line-height:1.3}
+.admin-role{font-size:11px;color:var(--text3)}
+
+/* MAIN */
+.admin-main{
+  margin-left:var(--sidebar);flex:1;
+  display:flex;flex-direction:column;min-height:100vh;
+}
+.topbar{
+  height:64px;padding:0 28px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--card);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:50;
+}
+.topbar-title{font-size:18px;font-weight:600}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.icon-btn{
+  width:38px;height:38px;border-radius:9px;border:1px solid var(--border);
+  background:var(--bg2);color:var(--text2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px;
+  transition:all .2s;
+}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold)}
+.content{padding:28px;flex:1}
+
+/* PAGES */
+.page{display:none}
+.page.active{display:block}
+
+/* DASHBOARD */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px}
+.metric-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:22px;position:relative;overflow:hidden;
+}
+.metric-card::after{
+  content:'';position:absolute;top:0;right:0;bottom:0;width:3px;
+  background:var(--m-color, var(--gold));
+}
+.metric-label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--text3);margin-bottom:8px}
+.metric-value{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--text)}
+.metric-sub{font-size:12px;color:var(--text2);margin-top:6px}
+.metric-icon{position:absolute;top:18px;right:16px;font-size:26px;opacity:.4}
+.dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:800px){.dashboard-grid{grid-template-columns:1fr}}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.card-header{
+  padding:18px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.card-title{font-size:15px;font-weight:600}
+.card-body{padding:16px 20px}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{
+  padding:10px 14px;text-align:left;
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;
+  color:var(--text3);border-bottom:1px solid var(--border);background:var(--bg2);
+}
+td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border:none}
+tr:hover td{background:rgba(201,168,76,0.03)}
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:100px;font-size:11px;font-weight:600;
+}
+.badge.pending{background:rgba(201,168,76,0.12);color:var(--gold)}
+.badge.confirmed{background:rgba(76,175,125,0.12);color:var(--success)}
+.badge.done{background:rgba(90,90,90,0.15);color:var(--text3)}
+.badge.cancelled{background:rgba(224,82,82,0.12);color:var(--danger)}
+.status-btns{display:flex;gap:6px;flex-wrap:wrap}
+.status-btn{
+  padding:5px 10px;border-radius:7px;font-size:12px;font-weight:600;
+  cursor:pointer;border:none;transition:all .2s;
+}
+.status-btn.pending{background:rgba(201,168,76,0.1);color:var(--gold)}
+.status-btn.confirm{background:rgba(76,175,125,0.1);color:var(--success)}
+.status-btn.done{background:rgba(90,90,90,0.1);color:var(--text3)}
+.status-btn.cancel{background:rgba(224,82,82,0.1);color:var(--danger)}
+.status-btn:hover{filter:brightness(1.3)}
+
+/* CALENDAR PAGE */
+.cal-page-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.cal-page-grid{grid-template-columns:1fr}}
+.big-calendar{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.big-cal-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.big-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.big-cal-header{text-align:center;font-size:11px;font-weight:600;color:var(--text3);padding:8px 0}
+.big-cal-day{
+  aspect-ratio:1;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;cursor:pointer;transition:all .2s;border:1px solid transparent;
+  position:relative;
+}
+.big-cal-day:hover{background:rgba(201,168,76,0.1);border-color:rgba(201,168,76,.3)}
+.big-cal-day.today{border-color:var(--gold);color:var(--gold);font-weight:600}
+.big-cal-day.has-appt::after{
+  content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);
+  width:5px;height:5px;border-radius:50%;background:var(--gold);
+}
+.big-cal-day.selected{background:var(--gold);color:#0A0A0A;font-weight:700}
+.big-cal-day.empty,.big-cal-day.disabled{cursor:default;opacity:.3}
+.day-appointments{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
+.appt-item{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:14px;margin-bottom:10px;
+}
+.appt-time-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,.3);
+  color:var(--gold);padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600;
+  margin-bottom:8px;
+}
+.appt-client{font-size:15px;font-weight:600}
+.appt-detail{font-size:12px;color:var(--text2);margin-top:3px}
+
+/* SERVICES PAGE */
+.services-admin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.svc-card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:20px;transition:all .2s;
+}
+.svc-card:hover{border-color:var(--gold)}
+.svc-card-icon{font-size:28px;margin-bottom:12px}
+.svc-card-name{font-size:16px;font-weight:600;margin-bottom:4px}
+.svc-card-price{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);font-weight:700}
+.svc-card-dur{font-size:12px;color:var(--text3);margin-top:4px}
+
+/* CLIENTS PAGE */
+.client-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:10px;
+}
+.client-avatar{
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold-dark),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:#0A0A0A;
+  flex-shrink:0;
+}
+.client-info .client-name{font-size:15px;font-weight:600}
+.client-info .client-email{font-size:12px;color:var(--text3);margin-top:2px}
+.client-info .client-phone{font-size:12px;color:var(--text2);margin-top:2px}
+.client-count{margin-left:auto;text-align:center}
+.client-count .cnt{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--gold)}
+.client-count .cnt-label{font-size:11px;color:var(--text3)}
+.wpp-btn-sm{
+  padding:7px 12px;border-radius:8px;background:#25D366;color:#fff;
+  font-size:12px;font-weight:600;border:none;cursor:pointer;
+  display:flex;align-items:center;gap:5px;transition:all .2s;text-decoration:none;
+}
+.wpp-btn-sm:hover{background:#20BB5A}
+
+/* SEARCH */
+.search-bar{
+  display:flex;gap:10px;margin-bottom:20px;
+}
+.search-input{
+  flex:1;padding:11px 16px;border-radius:10px;
+  background:var(--card);border:1px solid var(--border);
+  color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;
+  transition:all .2s;
+}
+.search-input:focus{border-color:var(--gold)}
+.search-input::placeholder{color:var(--text3)}
+
+/* MODAL */
+.modal-overlay{
+  position:fixed;inset:0;z-index:2000;
+  background:rgba(0,0,0,0.75);backdrop-filter:blur(8px);
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.modal-overlay.active{display:flex}
+.modal{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  width:100%;max-width:480px;max-height:90vh;overflow-y:auto;
+  animation:modalIn .3s ease;
+}
+.modal-header{padding:24px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700}
+.modal-close{
+  background:var(--bg3);border:none;color:var(--text2);
+  width:34px;height:34px;border-radius:50%;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:16px;transition:all .2s;
+}
+.modal-close:hover{background:var(--danger);color:#fff}
+.modal-body{padding:20px 24px 24px}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px 18px;display:flex;align-items:center;gap:12px;
+  font-size:14px;box-shadow:var(--shadow);animation:toastIn .3s ease;
+  min-width:270px;max-width:340px;
+}
+.toast.success{border-left:3px solid var(--success)}
+.toast.error{border-left:3px solid var(--danger)}
+.toast.info{border-left:3px solid var(--info)}
+
+/* NOTIFICATION PANEL */
+.notif-panel{
+  position:fixed;top:0;right:-360px;width:360px;height:100vh;
+  background:var(--card);border-left:1px solid var(--border);
+  z-index:300;padding:24px;overflow-y:auto;transition:right .3s;
+}
+.notif-panel.open{right:0}
+.notif-item{
+  background:var(--bg2);border:1px solid var(--border);border-radius:10px;
+  padding:14px;margin-bottom:10px;
+}
+.notif-title{font-size:14px;font-weight:600}
+.notif-time{font-size:11px;color:var(--text3);margin-top:4px}
+
+/* SETTINGS PAGE */
+.settings-section{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:24px;margin-bottom:16px;
+}
+.settings-title{font-size:15px;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.setting-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--border);
+}
+.setting-row:last-child{border:none}
+.setting-info .setting-label{font-size:14px;font-weight:500}
+.setting-info .setting-desc{font-size:12px;color:var(--text3);margin-top:2px}
+.toggle{
+  width:44px;height:24px;border-radius:12px;cursor:pointer;
+  background:var(--bg3);border:1px solid var(--border);
+  position:relative;transition:background .2s;flex-shrink:0;
+}
+.toggle.on{background:var(--gold)}
+.toggle::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:16px;height:16px;border-radius:50%;background:#fff;
+  transition:left .2s;
+}
+.toggle.on::after{left:23px}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+
+/* MOBILE MENU */
+.menu-toggle{
+  display:none;background:var(--bg2);border:1px solid var(--border);
+  color:var(--text);width:40px;height:40px;border-radius:9px;
+  align-items:center;justify-content:center;font-size:20px;cursor:pointer;
+}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.visible{display:block}
+  .admin-main{margin-left:0}
+  .menu-toggle{display:flex}
+  .metrics-grid{grid-template-columns:1fr 1fr}
+  .cal-page-grid{grid-template-columns:1fr}
+  .content{padding:16px}
+  .topbar{padding:0 16px}
+  .dashboard-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .metrics-grid{grid-template-columns:1fr}
+}
+</style>
+<link rel="stylesheet" href="admin-premium.css">
+<link rel="stylesheet" href="design-system.css">
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.15.0/firebase-app-check-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="shared.js"></script>
+</head>
+<body>
+
+<!-- ── AUTH SCREEN ─────────────────────────────────────────────────────────── -->
+<div id="authScreen">
+  <div class="auth-bg"></div>
+  <div class="auth-deco">✂</div>
+  <aside class="auth-aside" aria-hidden="false">
+    <div class="auth-aside-brand">✂ BarberPro</div>
+    <h1>Sua barbearia,<br>sob controle.</h1>
+    <ul>
+      <li><b>Agenda ao vivo</b><span>Cada reserva do site chega aqui na hora.</span></li>
+      <li><b>Clientes e histórico</b><span>Quem veio, quanto gastou, quando volta.</span></li>
+      <li><b>Seu perfil profissional</b><span>Foto, bio e especialidades aparecem no site.</span></li>
+    </ul>
+    <div class="pole" aria-hidden="true"></div>
+  </aside>
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">✂</div>
+      <div class="auth-logo-title">BarberPro Admin</div>
+      <div class="auth-logo-sub">Área exclusiva para proprietários</div>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="atLogin" onclick="switchAuthTab('login')">Entrar</button>
+      <button class="auth-tab" id="atRegister" onclick="switchAuthTab('register')" style="display:none">Cadastrar Empresa</button>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="aLoginForm">
+      <div class="form-group">
+        <label class="form-label">E-mail do Proprietário</label>
+        <input class="form-input" type="email" id="aLoginEmail" placeholder="seu@email.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Senha</label>
+        <input class="form-input" type="password" id="aLoginPass" placeholder="••••••••">
+      </div>
+      <button class="btn-primary" onclick="adminLogin()">🔐 Acessar Painel</button>
+      <div id="authNotice" class="auth-notice" style="display:none"></div>
+      <p style="text-align:center;margin-top:14px;font-size:13px"><a href="#" onclick="adminEsqueciSenha();return false" style="color:var(--gold);text-decoration:none">Esqueci minha senha</a></p>
+    </div>
+
+    <!-- REGISTER -->
+    <div id="aRegisterForm" style="display:none">
+      <div class="form-section">📋 Dados do Proprietário</div>
+      <div class="form-group">
+        <label class="form-label">Nome completo</label>
+        <input class="form-input" id="aRegName" placeholder="Seu nome completo">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">E-mail</label>
+          <input class="form-input" type="email" id="aRegEmail" placeholder="email@negocio.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CPF</label>
+          <input class="form-input" id="aRegCpf" placeholder="000.000.000-00">
+        </div>
+      </div>
+      <div class="form-section">🏪 Dados da Empresa</div>
+      <div class="form-group">
+        <label class="form-label">Nome da Empresa</label>
+        <input class="form-input" id="aRegBiz" placeholder="Ex: Barbearia do João">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tipo de Negócio</label>
+          <select class="form-input" id="aRegType" style="appearance:none">
+            <option value="barbearia">✂ Barbearia</option>
+            <option value="salao">💁 Salão de Beleza</option>
+            <option value="clinica">🏥 Clínica</option>
+            <option value="lavajato">🚗 Lava-Jato</option>
+            <option value="oficina">🔧 Oficina</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">WhatsApp da Empresa</label>
+          <input class="form-input" id="aRegWpp" placeholder="(11) 99999-9999">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">CNPJ (opcional)</label>
+          <input class="form-input" id="aRegCnpj" placeholder="00.000.000/0000-00">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cidade</label>
+          <input class="form-input" id="aRegCity" placeholder="São Paulo - SP">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Endereço</label>
+        <input class="form-input" id="aRegAddr" placeholder="Rua, número, bairro">
+      </div>
+      <div class="form-section">🔒 Acesso</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Senha</label>
+          <input class="form-input" type="password" id="aRegPass" placeholder="Mín. 6 dígitos">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmar Senha</label>
+          <input class="form-input" type="password" id="aRegPass2" placeholder="Repita a senha">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="adminRegister()">🏪 Criar Conta de Empresa</button>
+    </div>
+
+    <div class="back-link">
+      <a href="cliente.html">← Voltar para o site</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADMIN APP ───────────────────────────────────────────────────────────── -->
+<div id="adminApp">
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+  <div class="admin-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <span style="font-size:24px">✂</span>
+        <div>
+          BarberPro
+          <span id="bizNameTag">Empresa</span>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-group">Operação</div>
+        <button class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+          <span class="nav-item-icon">📊</span> Dashboard
+        </button>
+        <button class="nav-item" data-page="appointments" onclick="showPage('appointments')">
+          <span class="nav-item-icon">📅</span> Agendamentos
+          <span class="nav-badge" id="pendingBadge">0</span>
+        </button>
+        <button class="nav-item" data-page="calendar" onclick="showPage('calendar')">
+          <span class="nav-item-icon">🗓</span> Calendário
+        </button>
+        <button class="nav-item" data-page="clients" onclick="showPage('clients')">
+          <span class="nav-item-icon">👥</span> Clientes
+        </button>
+        <div class="nav-group">Catálogo e site</div>
+        <button class="nav-item" data-page="services" onclick="showPage('services')">
+          <span class="nav-item-icon">✂</span> Serviços
+        </button>
+        <button class="nav-item" data-page="barbers" onclick="showPage('barbers')">
+          <span class="nav-item-icon">🧔</span> Barbeiros
+        </button>
+        <button class="nav-item" data-page="gallery" onclick="showPage('gallery')">
+          <span class="nav-item-icon">🖼</span> Galeria
+        </button>
+        <button class="nav-item" data-page="site" onclick="showPage('site')">
+          <span class="nav-item-icon">🌐</span> Site e Conteúdo
+        </button>
+        <div class="nav-group">Conta</div>
+        <button class="nav-item" data-page="profile" onclick="showPage('profile')">
+          <span class="nav-item-icon">👤</span> Meu Perfil
+        </button>
+        <button class="nav-item" data-page="history" onclick="showPage('history')">
+          <span class="nav-item-icon">📋</span> Histórico
+        </button>
+        <button class="nav-item" data-page="settings" onclick="showPage('settings')">
+          <span class="nav-item-icon">⚙️</span> Configurações
+        </button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="admin-info" onclick="showPage('profile')" role="button" tabindex="0" title="Abrir meu perfil">
+          <div class="admin-avatar" id="adminAvatarSide">A</div>
+          <div>
+            <div class="admin-name" id="adminNameSide">Admin</div>
+            <div class="admin-role" id="adminRoleSide">Proprietário</div>
+          </div>
+        </div>
+        <button class="nav-item" onclick="adminLogout()" style="margin-top:4px;color:var(--danger)">
+          <span class="nav-item-icon">🚪</span> Sair
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="admin-main">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:14px">
+          <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+          <span class="topbar-title" id="pageTitle">Dashboard</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" onclick="toggleTheme()" title="Tema">☀</button>
+          <button class="icon-btn" onclick="toggleNotif()" title="Notificações">🔔</button>
+          <button class="icon-btn" onclick="showPage('appointments')" title="Novo agendamento">+</button>
+          <button class="top-avatar" id="topAvatar" onclick="showPage('profile')" title="Meu perfil" aria-label="Meu perfil">A</button>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- ── DASHBOARD ── -->
+        <div class="page active" id="dashboardPage">
+          <div class="hello" id="dashHello"></div>
+          <div class="metrics-grid">
+            <div class="metric-card" style="--m-color:var(--gold)">
+              <div class="metric-label">Hoje</div>
+              <div class="metric-value" id="mToday">0</div>
+              <div class="metric-sub">agendamentos hoje</div>
+              <div class="metric-icon">📅</div>
+            </div>
+            <div class="metric-card" style="--m-color:var(--warning)">
+              <div class="metric-label">Pendentes</div>
+              <div class="metric-value" id="mPending">0</div>
+              <div class="metric-sub">aguardando confirmação</div>
+              <div class="metric-icon">⏳</div>
+            </div>
+            <div class="metric-card" style="--m-color:var(--success)">
+              <div class="metric-label">Clientes</div>
+              <div class="metric-value" id="mClients">0</div>
+              <div class="metric-sub">cadastrados</div>
+              <div class="metric-icon">👥</div>
+            </div>
+            <div class="metric-card" style="--m-color:var(--info)">
+              <div class="metric-label">Faturamento Hoje</div>
+              <div class="metric-value" id="mRevenue">R$ 0</div>
+              <div class="metric-sub">serviços concluídos</div>
+              <div class="metric-icon">💰</div>
+            </div>
+          </div>
+          <div class="dashboard-grid">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">⏰ Próximos Agendamentos</div>
+                <button class="icon-btn" onclick="showPage('appointments')" style="font-size:12px;width:auto;padding:0 10px">Ver todos</button>
+              </div>
+              <div class="card-body" id="dashNextAppts"></div>
+            </div>
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">📊 Serviços Populares</div>
+              </div>
+              <div class="card-body" id="dashPopServices"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── APPOINTMENTS ── -->
+        <div class="page" id="appointmentsPage">
+          <div class="search-bar">
+            <input class="search-input" id="apptSearch" placeholder="🔍 Buscar por nome, serviço ou data..." oninput="renderAppointments()">
+            <select class="search-input" id="apptFilter" style="max-width:160px;appearance:none" onchange="renderAppointments()">
+              <option value="">Todos</option>
+              <option value="pending">Pendentes</option>
+              <option value="confirmed">Confirmados</option>
+              <option value="done">Concluídos</option>
+              <option value="cancelled">Cancelados</option>
+            </select>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📋 Todos os Agendamentos</div>
+              <button class="btn-primary" onclick="openModal('newAppt')" style="width:auto;padding:8px 16px;font-size:13px;margin-top:0">+ Novo</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Data/Hora</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="apptTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CALENDAR ── -->
+        <div class="page" id="calendarPage">
+          <div class="cal-page-grid">
+            <div class="big-calendar">
+              <div class="big-cal-nav">
+                <button class="icon-btn" onclick="adminChangeMonth(-1)">‹</button>
+                <span style="font-size:15px;font-weight:600" id="adminCalLabel"></span>
+                <button class="icon-btn" onclick="adminChangeMonth(1)">›</button>
+              </div>
+              <div class="big-cal-grid" id="adminCalGrid"></div>
+            </div>
+            <div class="day-appointments">
+              <div style="font-size:15px;font-weight:600;margin-bottom:16px" id="selectedDayTitle">Selecione um dia</div>
+              <div id="dayApptList"><p style="color:var(--text3);font-size:14px">Clique em um dia para ver os agendamentos.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CLIENTS ── -->
+        <div class="page" id="clientsPage">
+          <div class="search-bar">
+            <input class="search-input" id="clientSearch" placeholder="🔍 Buscar cliente..." oninput="renderClients()">
+          </div>
+          <div id="clientList"></div>
+        </div>
+
+        <!-- ── SERVICES ── -->
+        <div class="page" id="servicesPage">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+            <button class="btn-primary" onclick="openNewService()" style="width:auto;padding:10px 20px;font-size:14px">+ Novo Serviço</button>
+          </div>
+          <div class="services-admin-grid" id="servicesAdminGrid"></div>
+        </div>
+
+        <!-- ── BARBERS ── -->
+        <div class="page" id="barbersPage">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+            <p style="font-size:13px;color:var(--text2);max-width:520px">Cadastre cada barbeiro com foto, dias e horários próprios. Os clientes escolhem o profissional na hora de agendar.</p>
+            <button class="btn-primary" onclick="openBarberModal()" style="width:auto;padding:10px 20px;font-size:14px">+ Novo Barbeiro</button>
+          </div>
+          <div class="services-admin-grid" id="barbersAdminGrid"></div>
+        </div>
+
+        <!-- ── GALLERY ── -->
+        <div class="page" id="galleryPage">
+          <div class="settings-section">
+            <div class="settings-title">🖼 Galeria de cortes</div>
+            <p style="font-size:13px;color:var(--text2);margin-bottom:14px">Envie fotos dos seus cortes (elas são reduzidas automaticamente). Aparecem no site na seção "Galeria".</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+              <label class="btn-primary" style="width:auto;padding:10px 20px;font-size:14px;cursor:pointer;display:inline-block">
+                📷 Enviar fotos
+                <input type="file" accept="image/*" multiple id="galFiles" style="display:none" onchange="uploadGaleria(this.files);this.value=''">
+              </label>
+              <input class="form-input" id="galUrl" placeholder="ou cole o link (https://...) de uma imagem" style="flex:1;min-width:200px">
+              <button class="status-btn confirm" onclick="addGaleriaUrl()" style="padding:11px 16px;font-size:13px">+ Adicionar link</button>
+            </div>
+          </div>
+          <div class="services-admin-grid" id="galleryAdminGrid"></div>
+        </div>
+
+        <!-- ── SITE ── -->
+        <div class="page" id="sitePage">
+          <div class="settings-section">
+            <div class="settings-title">🏷 Marca da barbearia</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Nome da barbearia</label><input class="form-input" id="stNome" placeholder="Ex: Classic Barbearia"></div>
+              <div class="form-group"><label class="form-label">Cor da marca</label><input class="form-input" type="color" id="stCor" style="height:46px;padding:4px"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Slogan (rodapé)</label><input class="form-input" id="stSlogan" placeholder="Ex: Tradição e estilo em Belém"></div>
+              <div class="form-group"><label class="form-label">Slogan em inglês (opcional)</label><input class="form-input" id="stSloganEn"></div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Logo</label>
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <img id="stLogoPrev" alt="" style="height:48px;border-radius:8px;display:none">
+                <label class="status-btn confirm" style="cursor:pointer;padding:10px 16px;font-size:13px">Escolher logo
+                  <input type="file" accept="image/*" style="display:none" onchange="uploadLogo(this.files[0]);this.value=''"></label>
+                <button class="status-btn cancel" onclick="removerLogo()" style="padding:10px 16px;font-size:13px">Remover</button>
+              </div>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info"><div class="setting-label">Versão em inglês</div><div class="setting-desc">Mostra o botão PT/EN no site (útil para turistas e estrangeiros)</div></div>
+              <div class="toggle on" id="stIngles" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-title">📍 Contato e localização</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">WhatsApp do botão fixo</label><input class="form-input" id="stWpp" placeholder="(91) 99999-9999"></div>
+              <div class="form-group"><label class="form-label">Instagram</label><input class="form-input" id="stInsta" placeholder="@suabarbearia"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Endereço completo</label><input class="form-input" id="stEnd" placeholder="Rua, número, bairro, cidade - UF"></div>
+            <div class="form-group"><label class="form-label">Link do Google Maps (opcional — botão "Como chegar")</label><input class="form-input" id="stMaps" placeholder="https://maps.app.goo.gl/..."></div>
+            <div class="form-group"><label class="form-label">Aviso nos horários (ex: "Hoje fechamos às 15h") — deixe vazio para ocultar</label><input class="form-input" id="stAviso" placeholder="Aviso que aparece em destaque no site"></div>
+            <div class="form-group"><label class="form-label">Nota sobre os preços (opcional)</label><input class="form-input" id="stNotaPrecos" placeholder="Ex: Valores podem variar conforme o comprimento do cabelo"></div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-title">🕐 Horários de funcionamento</div>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:10px">Esses horários definem o que o cliente pode agendar e o aviso "Aberto agora". Mantenha sempre atualizado.</p>
+            <div id="stHorarios"></div>
+            <div class="form-group" style="margin-top:16px">
+              <label class="form-label">Feriados / dias de folga (o site bloqueia esses dias)</label>
+              <div style="display:flex;gap:8px"><input class="form-input" type="date" id="stNovaData"><button class="status-btn confirm" onclick="addDataFechada()" style="padding:0 16px">+ Adicionar</button></div>
+              <div id="stDatas" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px"></div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-title">☕ Ambiente e diferenciais</div>
+            <div id="stDifs"></div>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <input class="form-input" id="stDifIcon" placeholder="🎮" maxlength="4" style="width:70px">
+              <input class="form-input" id="stDifLabel" placeholder="Novo diferencial (ex: Sinuca)">
+              <button class="status-btn confirm" onclick="addDif()" style="padding:0 16px">+</button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-title">⭐ Avaliações do Google em destaque</div>
+            <div class="form-row">
+              <div class="form-group"><label class="form-label">Nota no Google (ex: 4,8)</label><input class="form-input" id="stNota" placeholder="4,8"></div>
+              <div class="form-group"><label class="form-label">Quantidade de avaliações</label><input class="form-input" id="stQtd" placeholder="312"></div>
+            </div>
+            <div class="form-group"><label class="form-label">Link para avaliar/ver no Google</label><input class="form-input" id="stGLink" placeholder="https://g.page/r/..."></div>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:10px">Copie aqui as melhores avaliações (com autorização do cliente) para destacar no site:</p>
+            <div id="stRevs"></div>
+            <button class="status-btn confirm" onclick="addRev()" style="padding:10px 16px;margin-top:8px">+ Adicionar avaliação</button>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-title">💎 Clube de mensalistas / assinatura</div>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:10px">Cada plano aparece no site com botão que abre o WhatsApp. O pagamento é combinado direto com o cliente.</p>
+            <div id="stPlanos"></div>
+            <button class="status-btn confirm" onclick="addPlano()" style="padding:10px 16px;margin-top:8px">+ Novo plano</button>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-title">📸 Posts do Instagram no site</div>
+            <p style="font-size:12px;color:var(--text3);margin-bottom:10px">Cole o link de até 6 posts ou reels (ex: https://www.instagram.com/p/XXXX/). Perfil precisa ser público.</p>
+            <div id="stPosts"></div>
+            <button class="status-btn confirm" onclick="addPost()" style="padding:10px 16px;margin-top:8px">+ Adicionar post</button>
+          </div>
+
+          <button class="btn-primary" onclick="saveSite()" style="position:sticky;bottom:12px;z-index:5">💾 Salvar alterações do site</button>
+        </div>
+
+        <!-- ── HISTORY ── -->
+        <div class="page" id="historyPage">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">📋 Histórico de Atendimentos</div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Data</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ── PROFILE ── -->
+        <div class="page" id="profilePage">
+          <section class="pfa-hero">
+            <div class="pfa-capa" id="pfaCapa">
+              <label class="pfa-capa-btn">📷 Trocar capa
+                <input type="file" accept="image/*" hidden onchange="pfaUploadCapa(this.files[0]);this.value=''"></label>
+            </div>
+            <div class="pfa-hero-body">
+              <div class="pfa-avatar-wrap">
+                <div class="pfa-avatar" id="pfaAvatar">A</div>
+                <label class="pfa-cam" title="Trocar foto" aria-label="Trocar foto">📷
+                  <input type="file" accept="image/*" hidden onchange="pfaUploadFoto(this.files[0]);this.value=''"></label>
+              </div>
+              <div class="pfa-ident">
+                <h2 id="pfaNome">—</h2>
+                <p id="pfaCargoTxt"></p>
+                <div class="pfa-badges" id="pfaBadges"></div>
+              </div>
+              <button class="btn-primary pfa-save" onclick="pfaSalvar()">💾 Salvar perfil</button>
+            </div>
+            <div class="pfa-stats" id="pfaStats"></div>
+          </section>
+
+          <div class="pfa-grid">
+            <div class="settings-section">
+              <div class="settings-title">🧔 Perfil profissional</div>
+              <p class="pfa-help">Estas informações formam o cartão "Conheça o dono" no site dos clientes.</p>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Nome de exibição</label><input class="form-input" id="pfaName" maxlength="60" placeholder="Seu nome"></div>
+                <div class="form-group"><label class="form-label">Cargo</label><input class="form-input" id="pfaCargo" maxlength="60" placeholder="Ex: Fundador e barbeiro-chefe"></div>
+              </div>
+              <div class="form-group"><label class="form-label">Sua história (bio)</label>
+                <textarea class="form-input" id="pfaBio" rows="5" maxlength="600" placeholder="Conte em poucas linhas como começou, seu estilo de trabalho e o que o cliente pode esperar."></textarea>
+                <div class="pfa-count"><span id="pfaBioCount">0</span>/600</div></div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Anos de experiência</label><input class="form-input" type="number" min="0" max="80" id="pfaAnos" placeholder="10"></div>
+                <div class="form-group"><label class="form-label">Instagram</label><input class="form-input" id="pfaInsta" placeholder="@seuusuario"></div>
+              </div>
+              <div class="form-group"><label class="form-label">Especialidades (Enter para adicionar)</label>
+                <div class="pfa-chips" id="pfaChips"></div>
+                <input class="form-input" id="pfaEspIn" maxlength="30" placeholder="Ex: Degradê, Barba na navalha, Pigmentação">
+              </div>
+              <details class="pfa-en"><summary>🇺🇸 Versão em inglês (opcional)</summary>
+                <div class="form-group" style="margin-top:10px"><label class="form-label">Cargo</label><input class="form-input" id="pfaCargoEn" maxlength="60"></div>
+                <div class="form-group"><label class="form-label">Bio</label><textarea class="form-input" id="pfaBioEn" rows="3" maxlength="600"></textarea></div>
+              </details>
+              <div class="setting-row">
+                <div class="setting-info"><div class="setting-label">Mostrar no site</div><div class="setting-desc">Exibe o cartão "Conheça o dono" para os clientes</div></div>
+                <div class="toggle on" id="pfaVisivel" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-title">🏪 Contato e empresa</div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Nome da empresa</label><input class="form-input" id="pfaBiz" maxlength="80"></div>
+                <div class="form-group"><label class="form-label">WhatsApp</label><input class="form-input" id="pfaPhone" inputmode="tel" placeholder="(91) 99999-9999"></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Cidade</label><input class="form-input" id="pfaCity" maxlength="60"></div>
+                <div class="form-group"><label class="form-label">E-mail de acesso</label><input class="form-input" id="pfaEmail" disabled></div>
+              </div>
+              <div class="form-group"><label class="form-label">Endereço</label><input class="form-input" id="pfaAddr" maxlength="140"></div>
+            </div>
+
+            <div class="settings-section">
+              <div class="settings-title">🔒 Segurança</div>
+              <p class="pfa-help">Por segurança, informe a senha atual para trocar por uma nova.</p>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Senha atual</label><input class="form-input" type="password" id="pfaPassOld" autocomplete="current-password"></div>
+                <div class="form-group"><label class="form-label">Nova senha</label><input class="form-input" type="password" id="pfaPassNew" autocomplete="new-password" placeholder="Mín. 6 caracteres"></div>
+              </div>
+              <button class="status-btn confirm" style="padding:11px 18px;font-size:13px" onclick="pfaTrocarSenha()">Alterar senha</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SETTINGS ── -->
+        <div class="page" id="settingsPage">
+          <div class="settings-section">
+            <div class="settings-title">🏪 Dados da Empresa</div>
+            <div id="settingsBizInfo"></div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-title">⚙️ Preferências</div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Notificações WhatsApp</div>
+                <div class="setting-desc">Enviar confirmação automática ao cliente</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')" id="wppToggle"></div>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Lembrete 1 hora antes</div>
+                <div class="setting-desc">Notificar cliente 60 min antes do horário</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+            </div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Agendamento automático</div>
+                <div class="setting-desc">Confirmar agendamentos automaticamente</div>
+              </div>
+              <div class="toggle" onclick="this.classList.toggle('on')"></div>
+            </div>
+          </div>
+          <div class="settings-section">
+            <div class="settings-title">🎨 Aparência</div>
+            <div class="setting-row">
+              <div class="setting-info">
+                <div class="setting-label">Tema Escuro</div>
+                <div class="setting-desc">Interface no tema escuro</div>
+              </div>
+              <div class="toggle on" id="themeToggleSetting" onclick="toggleTheme()"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-size:16px;font-weight:600">🔔 Notificações</div>
+      <button class="icon-btn" onclick="toggleNotif()" style="font-size:14px">✕</button>
+    </div>
+    <div id="notifList"></div>
+  </div>
+</div>
+
+<!-- NEW APPOINTMENT MODAL -->
+<div class="modal-overlay" id="newApptModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">+ Novo Agendamento</div>
+      <button class="modal-close" onclick="closeModal('newAppt')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Nome do Cliente</label>
+        <input class="form-input" id="naName" placeholder="Nome completo">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">WhatsApp</label>
+          <input class="form-input" id="naPhone" placeholder="(11) 99999-9999">
+        </div>
+        <div class="form-group">
+          <label class="form-label">E-mail</label>
+          <input class="form-input" id="naEmail" type="email" placeholder="cliente@email.com">
+        </div>
+      </div>
+      <div class="form-group" id="naBarberWrap" style="display:none">
+        <label class="form-label">Barbeiro</label>
+        <select class="form-input" id="naBarber" style="appearance:none" onchange="populateTimes()"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Serviço</label>
+        <select class="form-input" id="naService" style="appearance:none">
+          <option value="">Selecionar serviço</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Data</label>
+          <input class="form-input" type="date" id="naDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Horário</label>
+          <select class="form-input" id="naTime" style="appearance:none">
+            <option value="">Selecionar</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Observações</label>
+        <input class="form-input" id="naNotes" placeholder="Obs. do cliente ou profissional">
+      </div>
+      <button class="btn-primary" onclick="addManualAppointment()">✓ Criar Agendamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW / EDIT SERVICE MODAL -->
+<div class="modal-overlay" id="newSvcModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="svcModalTitle">+ Novo Serviço</div>
+      <button class="modal-close" onclick="closeModal('newSvc')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="nsId">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Ícone</label><input class="form-input" id="nsIcon" placeholder="Ex: ✂ 💈 🪒" maxlength="4"></div>
+        <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="nsName" placeholder="Nome do serviço"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Descrição</label><input class="form-input" id="nsDesc" placeholder="Breve descrição"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Preço (R$)</label><input class="form-input" type="number" step="0.01" id="nsPrice" placeholder="50"></div>
+        <div class="form-group"><label class="form-label">Duração (min)</label><input class="form-input" type="number" id="nsDur" placeholder="45"></div>
+      </div>
+      <div class="form-group"><label class="form-label">O que está incluso (um item por linha)</label>
+        <textarea class="form-input" rows="4" id="nsIncl" placeholder="Toalha quente&#10;Hidratação&#10;Finalização com pomada"></textarea></div>
+      <details style="margin-bottom:14px"><summary style="cursor:pointer;font-size:13px;color:var(--text2)">🇺🇸 Versão em inglês (opcional)</summary>
+        <div class="form-group" style="margin-top:10px"><label class="form-label">Nome</label><input class="form-input" id="nsNameEn"></div>
+        <div class="form-group"><label class="form-label">Descrição</label><input class="form-input" id="nsDescEn"></div>
+        <div class="form-group"><label class="form-label">Incluso (um por linha)</label><textarea class="form-input" rows="3" id="nsInclEn"></textarea></div>
+      </details>
+      <button class="btn-primary" onclick="saveService()">💾 Salvar Serviço</button>
+    </div>
+  </div>
+</div>
+
+<!-- BARBER MODAL -->
+<div class="modal-overlay" id="barberModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="bModalTitle">+ Novo Barbeiro</div>
+      <button class="modal-close" onclick="closeModal('barber')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="bId">
+      <div class="form-group" style="display:flex;align-items:center;gap:14px">
+        <img id="bFotoPrev" alt="" style="width:72px;height:72px;border-radius:50%;object-fit:cover;background:var(--bg3);display:none">
+        <label class="status-btn confirm" style="cursor:pointer;padding:10px 16px;font-size:13px">📷 Foto
+          <input type="file" accept="image/*" style="display:none" onchange="uploadFotoBarbeiro(this.files[0]);this.value=''"></label>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nome</label><input class="form-input" id="bNome" placeholder="Ex: Kleydir"></div>
+        <div class="form-group"><label class="form-label">Especialidade</label><input class="form-input" id="bEsp" placeholder="Ex: Degradê e barba"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Sobre ele</label><input class="form-input" id="bBio" placeholder="Frase curta de apresentação"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Sobre (inglês, opcional)</label><input class="form-input" id="bBioEn"></div>
+        <div class="form-group"><label class="form-label">Especialidade (inglês, opcional)</label><input class="form-input" id="bEspEn"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Dias de atendimento</label>
+        <div id="bDias" style="display:flex;gap:6px;flex-wrap:wrap"></div></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Começa às</label><input class="form-input" type="time" id="bIni" value="08:00"></div>
+        <div class="form-group"><label class="form-label">Termina às</label><input class="form-input" type="time" id="bFim" value="18:00"></div>
+      </div>
+      <button class="btn-primary" onclick="saveBarbeiro()">💾 Salvar barbeiro</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const HOURS = ['08:00','08:30','09:00','09:30','10:00','10:30','11:00','11:30',
+               '13:00','13:30','14:00','14:30','15:00','15:30','16:00','16:30','17:00','17:30'];
+
+const DEFAULT_SERVICES = SERVICOS_PADRAO; // definido em shared.js
+
+let adminState = {
+  theme: 'dark',
+  admin: null,
+  adminServices: [], // carregado do Firestore (coleção 'servicos', compartilhada com o site do cliente)
+  bookings: [],       // carregado em tempo real do Firestore (coleção 'agendamentos')
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth(),
+  selectedCalDay: null,
+};
+
+// ── FIRESTORE: DADOS ──────────────────────────────────────────────────────────
+async function carregarAdminServicos(){
+  let snap = await db.collection('servicos').get();
+  if(snap.empty){
+    // 1ª vez: grava os serviços de exemplo (o dono edita depois)
+    const batch = db.batch();
+    DEFAULT_SERVICES.forEach((s,i)=>{
+      batch.set(db.collection('servicos').doc(), {...s, ativo:true, ordem:i});
+    });
+    await batch.commit();
+    snap = await db.collection('servicos').get();
+  }
+  adminState.adminServices = snap.docs
+    .map(d=>({id:d.id, ...d.data()}))
+    .filter(s=>s.ativo!==false)
+    .sort((a,b)=>(a.ordem??0)-(b.ordem??0));
+}
+let unsubscribeAgendamentos = null;
+function ouvirAgendamentosAdmin(){
+  if(unsubscribeAgendamentos) unsubscribeAgendamentos();
+  unsubscribeAgendamentos = db.collection('agendamentos').onSnapshot(snap=>{
+    adminState.bookings = snap.docs.map(d=>({id:d.id, ...d.data()}));
+    renderDashboard();
+    renderAppointments();
+    renderAdminCalendar();
+    renderClients();
+    renderHistory();
+    updatePendingBadge();
+    renderNotifications();
+    if(typeof renderPerfilStatsAdmin==='function') renderPerfilStatsAdmin();
+  });
+}
+
+// ── THEME ─────────────────────────────────────────────────────────────────────
+function toggleTheme(){
+  adminState.theme = adminState.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', adminState.theme);
+  document.querySelector('.icon-btn[onclick="toggleTheme()"]').textContent = adminState.theme === 'dark' ? '☀' : '🌙';
+  const ts = document.getElementById('themeToggleSetting');
+  if(ts) ts.classList.toggle('on', adminState.theme === 'dark');
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────────────────
+function toast(msg, type='info'){
+  const icons = {success:'✅', error:'❌', info:'ℹ️'};
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span style="font-size:18px">${icons[type]}</span>${msg}`;
+  document.getElementById('toastContainer').appendChild(t);
+  setTimeout(()=> t.remove(), 4000);
+}
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+function openModal(id){ document.getElementById(id+'Modal').classList.add('active'); }
+function closeModal(id){ document.getElementById(id+'Modal').classList.remove('active'); }
+
+// ── SEGURANÇA: escapa dados vindos do cliente antes de inserir no HTML ────────
+// Nunca renderize name/email/phone/notes de agendamentos direto em innerHTML sem
+// passar por esta função — evita XSS armazenado vindo do formulário público.
+function esc(str){
+  if(str===null||str===undefined) return '';
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+function switchAuthTab(tab){
+  document.getElementById('atLogin').classList.toggle('active', tab==='login');
+  document.getElementById('atRegister').classList.toggle('active', tab==='register');
+  document.getElementById('aLoginForm').style.display = tab==='login' ? 'block' : 'none';
+  document.getElementById('aRegisterForm').style.display = tab==='register' ? 'block' : 'none';
+}
+// Mensagem clara para cada erro do Firebase (antes tudo virava "Credenciais inválidas")
+function msgErroAuth(e){
+  const c = (e && e.code) || '';
+  if(['auth/invalid-credential','auth/wrong-password','auth/user-not-found','auth/invalid-login-credentials'].includes(c))
+    return 'E-mail ou senha incorretos. Confira os dados. Se você é o dono e ainda não tem acesso, fale com o administrador do sistema. Se esqueceu a senha, toque em "Esqueci minha senha".';
+  if(c==='auth/invalid-email') return 'Esse e-mail não parece válido.';
+  if(c==='auth/too-many-requests') return 'Muitas tentativas seguidas. Aguarde alguns minutos ou redefina a senha.';
+  if(c==='auth/network-request-failed') return 'Sem conexão com o servidor. Verifique a internet e tente de novo.';
+  if(c==='auth/user-disabled') return 'Essa conta foi desativada.';
+  if(c==='permission-denied' || c==='firestore/permission-denied') return 'O banco de dados recusou o acesso (regras do Firestore). Veja o arquivo firestore.rules do projeto.';
+  return 'Não foi possível entrar ['+(c||(e&&e.message)||'erro')+']';
+}
+function mostrarAviso(html){
+  const el = document.getElementById('authNotice'); if(!el) return;
+  el.innerHTML = html; el.style.display = html ? 'block' : 'none';
+}
+function copiarTexto(txt){
+  try{ navigator.clipboard.writeText(txt); toast('Copiado!','success'); }catch(e){ toast('Copie manualmente: '+txt,'info'); }
+}
+// Garante que o usuário logado tenha o documento em "admins".
+// Resolve o caso "criei a conta mas diz que não sou administrador".
+async function garantirAdmin(user){
+  const ref = db.collection('admins').doc(user.uid);
+  let doc = await ref.get();
+  if(doc.exists) return doc.data();
+  // Sem ficha em "admins": esta conta não é proprietária. A ficha é criada manualmente
+  // pelo console do Firebase (ver README). Nunca criamos dono automaticamente.
+  return null;
+}
+async function _adminLogin(){
+  const email = document.getElementById('aLoginEmail').value.trim();
+  const pass = document.getElementById('aLoginPass').value;
+  mostrarAviso('');
+  if(!email||!pass) return toast('Preencha e-mail e senha', 'error');
+  let cred;
+  try{ cred = await auth.signInWithEmailAndPassword(email, pass); }
+  catch(e){ return toast(msgErroAuth(e), 'error'); }
+  try{
+    const dados = await garantirAdmin(cred.user);
+    if(!dados){
+      const uid = cred.user.uid;
+      await auth.signOut();
+      mostrarAviso(`<strong>Esta conta não é de administrador.</strong><br>
+        O e-mail <b>${esc(email)}</b> existe, mas já há um proprietário cadastrado e esta conta não está autorizada.
+        Se você é o dono, abra o <b>Firebase Console → Firestore → coleção <code>admins</code></b> e crie um documento
+        com este ID (UID):<br><code id="uidAviso" style="display:block;margin:8px 0;word-break:break-all;user-select:all">${esc(uid)}</code>
+        com os campos <code>name</code> (texto) e <code>email</code> (texto). Depois é só entrar de novo.
+        <br><button class="status-btn confirm" style="margin-top:8px;padding:8px 14px;font-size:12px" onclick="copiarTexto('${esc(uid)}')">Copiar UID</button>`);
+      return;
+    }
+    adminState.admin = {uid: cred.user.uid, ...dados};
+    initAdminApp();
+  }catch(e){
+    try{ await auth.signOut(); }catch(_){}
+    toast(msgErroAuth(e), 'error');
+  }
+}
+// Cadastro público de proprietário desativado: a conta do dono é criada pelo administrador
+// do sistema (ver README). Assim nenhum visitante consegue virar administrador.
+async function _adminRegister(){
+  toast('O cadastro de empresa é feito pelo administrador do sistema. Fale com o suporte.', 'info');
+}
+function adminLogout(){
+  auth.signOut();
+  if(unsubscribeAgendamentos) unsubscribeAgendamentos();
+  adminState.admin = null;
+  document.getElementById('adminApp').style.display = 'none';
+  document.getElementById('authScreen').style.display = 'flex';
+  toast('Sessão encerrada', 'info');
+}
+async function initAdminApp(){
+  const a = adminState.admin;
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('adminApp').style.display = 'block';
+  atualizarCabecalhoAdmin();
+  try{ await carregarAdminServicos(); }
+  catch(e){ console.error(e); toast('Não consegui carregar os serviços ('+(e.code||e.message)+'). Confira as regras do Firestore.','error'); }
+  renderAdminServices();
+  renderSettings();
+  try{ await carregarExtrasAdmin(); }catch(e){ console.error(e); toast('Erro ao carregar dados do painel ('+(e.code||e.message)+')','error'); }
+  ouvirAgendamentosAdmin(); // dispara render dos agendamentos/dashboard/histórico em tempo real
+  if(typeof iniciarPerfilAdmin==='function') iniciarPerfilAdmin();
+}
+function atualizarCabecalhoAdmin(){
+  const a = adminState.admin; if(!a) return;
+  document.getElementById('bizNameTag').textContent = a.bizName || 'Empresa';
+  const av = document.getElementById('adminAvatarSide');
+  const foto = safeImg(a.foto);
+  if(foto){ av.innerHTML = `<img src="${esc(foto)}" alt="">`; } else { av.textContent = iniciais(a.name); }
+  document.getElementById('adminNameSide').textContent = a.name || 'Admin';
+  document.getElementById('adminRoleSide').textContent = a.cargo || 'Proprietário';
+  const tb = document.getElementById('topAvatar');
+  if(tb){ tb.innerHTML = foto ? `<img src="${esc(foto)}" alt="">` : esc(iniciais(a.name)); }
+}
+
+// ── SIDEBAR ───────────────────────────────────────────────────────────────────
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('visible');
+}
+
+// ── PAGES ─────────────────────────────────────────────────────────────────────
+const pageTitles = {
+  dashboard:'📊 Dashboard', appointments:'📅 Agendamentos',
+  calendar:'🗓 Calendário', clients:'👥 Clientes',
+  services:'✂ Serviços', barbers:'🧔 Barbeiros', gallery:'🖼 Galeria', site:'🌐 Site e Conteúdo', history:'📋 Histórico', profile:'👤 Meu Perfil', settings:'⚙️ Configurações'
+};
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id+'Page').classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active', n.dataset.page===id));
+  document.getElementById('pageTitle').textContent = pageTitles[id] || id;
+  if(id==='calendar') renderAdminCalendar();
+  if(id==='profile' && typeof renderPerfilAdmin==='function') renderPerfilAdmin();
+  window.scrollTo({top:0});
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('visible');
+}
+
+// ── NOTIFICATIONS ─────────────────────────────────────────────────────────────
+let notifOpen = false;
+function toggleNotif(){
+  notifOpen = !notifOpen;
+  document.getElementById('notifPanel').classList.toggle('open', notifOpen);
+}
+function renderNotifications(){
+  const pending = adminState.bookings.filter(b=>b.status==='pending');
+  if(!pending.length){
+    document.getElementById('notifList').innerHTML = '<p style="color:var(--text3);font-size:14px">Nenhuma notificação.</p>';
+    return;
+  }
+  document.getElementById('notifList').innerHTML = pending.map(b=>`
+    <div class="notif-item">
+      <div class="notif-title">📅 Novo agendamento: ${esc(b.name)}</div>
+      <div style="font-size:13px;color:var(--text2);margin-top:4px">${esc(b.service)} • ${esc(b.date)} às ${esc(b.time)}</div>
+      <div class="notif-time">R$ ${b.price} • Aguardando confirmação</div>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <button class="status-btn confirm" onclick="updateStatus('${b.id}','confirmed');renderNotifications()">✓ Confirmar</button>
+        <button class="status-btn cancel" onclick="updateStatus('${b.id}','cancelled');renderNotifications()">✕ Cancelar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const today = dateStrLocal();
+  const todayAppts = adminState.bookings.filter(b=>b.date===today);
+  const pending = adminState.bookings.filter(b=>b.status==='pending');
+  const uniqueClients = [...new Set(adminState.bookings.map(b=>b.email||b.phone))];
+  const revenue = todayAppts.filter(b=>b.status==='done').reduce((a,b)=>a+b.price,0);
+  document.getElementById('mToday').textContent = todayAppts.length;
+  document.getElementById('mPending').textContent = pending.length;
+  document.getElementById('mClients').textContent = uniqueClients.length;
+  document.getElementById('mRevenue').textContent = `R$ ${revenue}`;
+
+  // Next appointments
+  const upcoming = adminState.bookings
+    .filter(b=>b.status!=='cancelled'&&b.status!=='done')
+    .sort((a,b)=>new Date(a.date+'T'+a.time)-new Date(b.date+'T'+b.time))
+    .slice(0,4);
+  document.getElementById('dashNextAppts').innerHTML = upcoming.length ? upcoming.map(b=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="text-align:center;min-width:50px">
+        <div style="font-size:13px;font-weight:700;color:var(--gold)">${esc(b.time)}</div>
+        <div style="font-size:10px;color:var(--text3)">${esc(b.date?.slice(5))}</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:600">${esc(b.name)}</div>
+        <div style="font-size:12px;color:var(--text2)">${esc(b.service)}</div>
+      </div>
+      <span class="badge ${b.status||'pending'}">${b.status==='confirmed'?'✅':'⏳'}</span>
+    </div>
+  `).join('') : '<p style="color:var(--text3);font-size:14px;padding:10px 0">Nenhum próximo agendamento.</p>';
+
+  // Popular services
+  const svcCount = {};
+  adminState.bookings.forEach(b=>{ svcCount[b.service] = (svcCount[b.service]||0)+1; });
+  const sorted = Object.entries(svcCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  const max = sorted[0]?.[1] || 1;
+  document.getElementById('dashPopServices').innerHTML = sorted.length ? sorted.map(([svc,cnt])=>`
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:13px">
+        <span>${esc(svc)}</span><strong>${cnt}</strong>
+      </div>
+      <div style="height:6px;border-radius:3px;background:var(--bg3);overflow:hidden">
+        <div style="height:100%;width:${(cnt/max)*100}%;background:var(--gold);border-radius:3px"></div>
+      </div>
+    </div>
+  `).join('') : '<p style="color:var(--text3);font-size:14px">Nenhum dado disponível.</p>';
+}
+
+// ── APPOINTMENTS ──────────────────────────────────────────────────────────────
+function updatePendingBadge(){
+  const cnt = adminState.bookings.filter(b=>b.status==='pending').length;
+  const badge = document.getElementById('pendingBadge');
+  badge.textContent = cnt;
+  badge.style.display = cnt ? 'inline-flex' : 'none';
+}
+async function updateStatus(id, status){
+  const b = adminState.bookings.find(b=>b.id===id);
+  if(!b) return;
+  try{
+    await db.collection('agendamentos').doc(id).update({status});
+    // mantém o espelho público (sem dados pessoais) em sincronia
+    await db.collection('disponibilidade').doc(dispKey(b.date, b.time, b.barberId))
+      .set({date: b.date, time: b.time, status}, {merge:true});
+  }catch(e){
+    return toast('Erro ao atualizar: ' + e.message, 'error');
+  }
+  const msgs = {confirmed:'✅ Agendamento confirmado!', done:'✔ Marcado como concluído', cancelled:'❌ Agendamento cancelado', pending:'⏳ Marcado como pendente'};
+  toast(msgs[status]||'Atualizado', status==='confirmed'?'success':status==='done'?'info':'error');
+  // o listener em tempo real (onSnapshot) já re-renderiza tudo automaticamente
+  // WhatsApp reminder
+  if(status==='confirmed'&&b.phone){
+    const phone = b.phone.replace(/\D/g,'');
+    const msg = encodeURIComponent(`Olá ${b.name}! Seu agendamento de *${b.service}* para ${b.date} às ${b.time} foi *CONFIRMADO*. Aguardamos você! ✂💈`);
+    const link = `https://wa.me/55${phone}?text=${msg}`;
+    toast(`<a href="${link}" target="_blank" style="color:var(--success)">📱 Clique para notificar o cliente no WhatsApp</a>`, 'success');
+  }
+}
+function renderAppointments(){
+  const query = (document.getElementById('apptSearch')?.value||'').toLowerCase();
+  const filter = document.getElementById('apptFilter')?.value||'';
+  let list = adminState.bookings.filter(b=>{
+    const match = !query || b.name?.toLowerCase().includes(query) || b.service?.toLowerCase().includes(query) || b.date?.includes(query);
+    const st = !filter || b.status===filter;
+    return match && st;
+  }).sort((a,b)=>new Date(b.date+'T'+b.time)-new Date(a.date+'T'+a.time));
+  
+  const statusLabel = {pending:'⏳ Pendente', confirmed:'✅ Confirmado', done:'✔ Concluído', cancelled:'❌ Cancelado'};
+  document.getElementById('apptTableBody').innerHTML = list.length ? list.map(b=>`
+    <tr>
+      <td>
+        <div style="font-weight:600;font-size:14px">${esc(b.name)}</div>
+        <div style="font-size:11px;color:var(--text3)">${esc(b.phone||b.email||'—')}</div>
+      </td>
+      <td>${esc(b.service)}${b.barber?`<div style="font-size:11px;color:var(--text3)">✂ ${esc(b.barber)}</div>`:''}</td>
+      <td>
+        <div style="font-size:14px;font-weight:500">${esc(b.date)}</div>
+        <div style="font-size:12px;color:var(--gold)">${esc(b.time)}</div>
+      </td>
+      <td style="font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--gold)">R$ ${b.price}</td>
+      <td><span class="badge ${b.status||'pending'}">${statusLabel[b.status]||'⏳ Pendente'}</span></td>
+      <td>
+        <div class="status-btns">
+          <button class="status-btn confirm" onclick="updateStatus('${b.id}','confirmed')">✓</button>
+          <button class="status-btn done" onclick="updateStatus('${b.id}','done')">✔ Feito</button>
+          <button class="status-btn pending" onclick="updateStatus('${b.id}','pending')">↩</button>
+          <button class="status-btn cancel" onclick="updateStatus('${b.id}','cancelled')">✕</button>
+          ${b.phone?`<a href="https://wa.me/55${b.phone.replace(/\D/g,'')}?text=${encodeURIComponent('Olá '+b.name+'!')}" target="_blank" style="text-decoration:none"><button class="status-btn" style="background:rgba(37,211,102,.1);color:#25D366">📱</button></a>`:''}
+        </div>
+      </td>
+    </tr>
+  `).join('') : `<tr><td colspan="6" style="text-align:center;color:var(--text3);padding:30px">Nenhum agendamento encontrado.</td></tr>`;
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+function renderAdminCalendar(){
+  const months = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+                  'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('adminCalLabel').textContent = `${months[adminState.calMonth]} ${adminState.calYear}`;
+  const first = new Date(adminState.calYear, adminState.calMonth, 1).getDay();
+  const days = new Date(adminState.calYear, adminState.calMonth+1, 0).getDate();
+  const now = new Date();
+  const ds = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  let html = ds.map(d=>`<div class="big-cal-header">${d}</div>`).join('');
+  for(let i=0;i<first;i++) html+=`<div class="big-cal-day empty"></div>`;
+  for(let d=1;d<=days;d++){
+    const dateStr = `${adminState.calYear}-${String(adminState.calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const today = dateStrLocal(now);
+    const hasAppt = adminState.bookings.some(b=>b.date===dateStr&&b.status!=='cancelled');
+    const isSelected = dateStr===adminState.selectedCalDay;
+    let cls='big-cal-day';
+    if(isSelected) cls+=' selected';
+    else if(dateStr===today) cls+=' today';
+    if(hasAppt) cls+=' has-appt';
+    html+=`<div class="${cls}" onclick="selectAdminDay('${dateStr}')">${d}</div>`;
+  }
+  document.getElementById('adminCalGrid').innerHTML = html;
+}
+function adminChangeMonth(dir){
+  adminState.calMonth+=dir;
+  if(adminState.calMonth>11){adminState.calMonth=0;adminState.calYear++;}
+  if(adminState.calMonth<0){adminState.calMonth=11;adminState.calYear--;}
+  renderAdminCalendar();
+}
+function selectAdminDay(dateStr){
+  adminState.selectedCalDay = dateStr;
+  renderAdminCalendar();
+  const dayAppts = adminState.bookings.filter(b=>b.date===dateStr&&b.status!=='cancelled')
+    .sort((a,b)=>a.time.localeCompare(b.time));
+  const dateFormatted = new Date(dateStr+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
+  document.getElementById('selectedDayTitle').textContent = dateFormatted.charAt(0).toUpperCase()+dateFormatted.slice(1);
+  document.getElementById('dayApptList').innerHTML = dayAppts.length ? dayAppts.map(b=>`
+    <div class="appt-item">
+      <div class="appt-time-badge">🕐 ${esc(b.time)}</div>
+      <div class="appt-client">${esc(b.name)}</div>
+      <div class="appt-detail">${esc(b.service)} • R$ ${b.price} • ${b.dur||45}min${b.barber?' • ✂ '+esc(b.barber):''}</div>
+      ${b.phone?`<div class="appt-detail">📱 ${esc(b.phone)}</div>`:''}
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <span class="badge ${b.status||'pending'}">${b.status==='confirmed'?'✅ Confirmado':b.status==='done'?'✔ Concluído':'⏳ Pendente'}</span>
+        ${b.status!=='confirmed'?`<button class="status-btn confirm" style="font-size:11px" onclick="updateStatus('${b.id}','confirmed');selectAdminDay('${dateStr}')">Confirmar</button>`:''}
+        ${b.status!=='done'?`<button class="status-btn done" style="font-size:11px" onclick="updateStatus('${b.id}','done');selectAdminDay('${dateStr}')">Concluído</button>`:''}
+      </div>
+    </div>
+  `).join('') : `<p style="color:var(--text3);font-size:14px">Nenhum agendamento para esse dia.</p>`;
+}
+
+// ── CLIENTS ───────────────────────────────────────────────────────────────────
+function renderClients(){
+  const q = (document.getElementById('clientSearch')?.value||'').toLowerCase();
+  const map = {};
+  adminState.bookings.forEach(b=>{
+    const key = b.email||b.phone||b.name;
+    if(!map[key]) map[key]={name:b.name,email:b.email,phone:b.phone,count:0};
+    map[key].count++;
+  });
+  let clients = Object.values(map).filter(c=>!q||c.name?.toLowerCase().includes(q)||c.email?.toLowerCase().includes(q));
+  document.getElementById('clientList').innerHTML = clients.length ? clients.map(c=>`
+    <div class="client-card">
+      <div class="client-avatar">${esc((c.name||'?').charAt(0).toUpperCase())}</div>
+      <div class="client-info" style="flex:1">
+        <div class="client-name">${esc(c.name||'—')}</div>
+        ${c.email?`<div class="client-email">✉ ${esc(c.email)}</div>`:''}
+        ${c.phone?`<div class="client-phone">📱 ${esc(c.phone)}</div>`:''}
+      </div>
+      <div class="client-count">
+        <div class="cnt">${c.count}</div>
+        <div class="cnt-label">visitas</div>
+      </div>
+      ${c.phone?`<a href="https://wa.me/55${c.phone.replace(/\D/g,'')}" target="_blank" class="wpp-btn-sm">📱 WPP</a>`:''}
+    </div>
+  `).join('') : '<p style="color:var(--text3);font-size:14px;text-align:center;padding:40px">Nenhum cliente encontrado.</p>';
+}
+
+// ── SERVICES ──────────────────────────────────────────────────────────────────
+function renderAdminServices(){
+  const sel = document.getElementById('naService');
+  if(sel){
+    sel.innerHTML = '<option value="">Selecionar serviço</option>' +
+      adminState.adminServices.map(s=>`<option value="${s.id}">${esc(s.icon)} ${esc(s.name)} — R$ ${s.price}</option>`).join(''); // value já é string (id do Firestore)
+  }
+  document.getElementById('servicesAdminGrid').innerHTML = adminState.adminServices.map(s=>`
+    <div class="svc-card">
+      <div class="svc-card-icon">${esc(s.icon)}</div>
+      <div class="svc-card-name">${esc(s.name)}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:8px">${esc(s.desc)}</div>
+      <div class="svc-card-price">R$ ${s.price}</div>
+      <div class="svc-card-dur">⏱ ${s.dur} minutos</div>
+      ${(s.inclui&&s.inclui.length)?`<div style="font-size:11px;color:var(--text2);margin-top:8px">✓ ${s.inclui.map(esc).join(' • ')}</div>`:''}
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="status-btn confirm" onclick="editService('${s.id}')" style="font-size:11px">✏️ Editar</button>
+        <button class="status-btn cancel" onclick="removeService('${s.id}')" style="font-size:11px">🗑 Remover</button>
+      </div>
+    </div>
+  `).join('');
+}
+async function removeService(id){
+  if(!confirm('Remover este serviço?')) return;
+  try{
+    // soft delete: marca inativo para não sumir de agendamentos já feitos
+    await db.collection('servicos').doc(id).update({ativo:false});
+    adminState.adminServices = adminState.adminServices.filter(s=>s.id!==id);
+    renderAdminServices();
+    toast('Serviço removido', 'info');
+  }catch(e){
+    toast('Erro ao remover serviço: ' + e.message, 'error');
+  }
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function renderHistory(){
+  const statusLabel = {pending:'⏳ Pendente', confirmed:'✅ Confirmado', done:'✔ Concluído', cancelled:'❌ Cancelado'};
+  const all = [...adminState.bookings].sort((a,b)=>new Date(b.date+'T'+b.time)-new Date(a.date+'T'+a.time));
+  document.getElementById('historyBody').innerHTML = all.length ? all.map(b=>`
+    <tr>
+      <td><div style="font-weight:600">${esc(b.name)}</div><div style="font-size:11px;color:var(--text3)">${esc(b.email||'')}</div></td>
+      <td>${esc(b.service)}${b.barber?` <span style="color:var(--text3)">• ${esc(b.barber)}</span>`:''}</td>
+      <td>${esc(b.date)} ${esc(b.time)}</td>
+      <td style="font-family:'Playfair Display',serif;font-weight:700;color:var(--gold)">R$ ${b.price}</td>
+      <td><span class="badge ${b.status||'pending'}">${statusLabel[b.status]||'⏳'}</span></td>
+    </tr>
+  `).join('') : `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:30px">Nenhum histórico disponível.</td></tr>`;
+}
+
+// ── MANUAL APPOINTMENT ────────────────────────────────────────────────────────
+function populateTimes(){
+  const dateVal = document.getElementById('naDate').value;
+  const barberId = document.getElementById('naBarber')?.value || '';
+  const barb = adminState.barbers.find(b=>b.id===barberId) || null;
+  let slots = dateVal ? gerarSlots(adminState.site, dateVal, barb) : [];
+  if(!slots.length) slots = [...HOURS]; // dono pode encaixar fora do horário padrão
+  const taken = t => adminState.bookings.some(b=>ocupaBarbeiro(b, dateVal, t, barberId||null));
+  const sel = document.getElementById('naTime');
+  sel.innerHTML = '<option value="">Selecionar horário</option>'+
+    slots.map(h=>`<option value="${h}" ${taken(h)?'disabled':''}>${h} ${taken(h)?'(ocupado)':''}</option>`).join('');
+}
+document.getElementById('naDate').addEventListener('change', populateTimes);
+async function addManualAppointment(){
+  const name = document.getElementById('naName').value.trim();
+  const phone = document.getElementById('naPhone').value.trim();
+  const email = document.getElementById('naEmail').value.trim();
+  const svcId = document.getElementById('naService').value;
+  const barberId = document.getElementById('naBarber')?.value || '';
+  const barb = adminState.barbers.find(b=>b.id===barberId) || null;
+  const date = document.getElementById('naDate').value;
+  const time = document.getElementById('naTime').value;
+  const notes = document.getElementById('naNotes').value.trim();
+  if(!name||!svcId||!date||!time) return toast('Preencha os campos obrigatórios', 'error');
+  if(adminState.barbers.length && !barb) return toast('Escolha o barbeiro', 'error');
+  const svc = adminState.adminServices.find(s=>s.id===svcId);
+  if(!svc) return toast('Serviço inválido', 'error');
+  const booking = {
+    name, phone, email, notes,
+    service:svc.name, serviceId:svcId,
+    price:svc.price, dur:svc.dur, duration:svc.dur,
+    date, time, status:'confirmed',
+    createdAt:new Date().toISOString()
+  };
+  if(barb){ booking.barberId = barb.id; booking.barber = barb.nome; }
+  try{
+    await db.collection('agendamentos').add(booking);
+    const espelho = {date, time, status:'confirmed'};
+    if(barb) espelho.barberId = barb.id;
+    await db.collection('disponibilidade').doc(dispKey(date, time, barb?.id)).set(espelho);
+    closeModal('newAppt');
+    // o listener em tempo real já atualiza os painéis
+    toast(`Agendamento de ${name} criado!`, 'success');
+  }catch(e){
+    toast('Erro ao criar agendamento: ' + e.message, 'error');
+  }
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────────────
+function renderSettings(){
+  const a = adminState.admin;
+  if(!a) return;
+  document.getElementById('settingsBizInfo').innerHTML = `
+    <div class="setting-row">
+      <div class="setting-info"><div class="setting-label">Nome da Empresa</div></div>
+      <strong>${esc(a.bizName)||'—'}</strong>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="setting-label">Proprietário</div></div>
+      <strong>${esc(a.name)||'—'}</strong>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="setting-label">E-mail</div></div>
+      <strong>${esc(a.email)||'—'}</strong>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="setting-label">WhatsApp</div></div>
+      <strong>${esc(a.phone)||'—'}</strong>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="setting-label">Cidade</div></div>
+      <strong>${esc(a.city)||'—'}</strong>
+    </div>
+    <div class="setting-row">
+      <div class="setting-info"><div class="setting-label">Tipo de Negócio</div></div>
+      <strong style="text-transform:capitalize">${esc(a.bizType)||'—'}</strong>
+    </div>
+  `;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// NOVOS RECURSOS DO PAINEL: barbeiros, galeria, conteúdo do site, edição de serviços
+// ══════════════════════════════════════════════════════════════════════════════
+adminState.barbers = [];
+adminState.gallery = [];
+adminState.site = null;
+adminState.barberFoto = '';
+
+const DIFS_PADRAO = [
+  {icon:'☕', label:'Café', label_en:'Coffee'}, {icon:'❄️', label:'Climatizado', label_en:'Air-conditioned'},
+  {icon:'📶', label:'Wi-Fi grátis', label_en:'Free Wi-Fi'}, {icon:'🍺', label:'Bar', label_en:'Bar'},
+  {icon:'🕹️', label:'Fliperama', label_en:'Arcade'}, {icon:'🎱', label:'Bilhar', label_en:'Pool table'},
+  {icon:'🧩', label:'Atendimento a crianças com TEA', label_en:'Autism-friendly service for kids'},
+].map(d=>({...d, ativo:false}));
+
+function siteVazio(){
+  return {nome:'', cor:'#C9A84C', slogan:'', ingles:true, horarios:horariosSugeridos(), datasFechadas:[],
+          diferenciais: DIFS_PADRAO.map(d=>({...d})), avaliacoes:[], planos:[], instaPosts:[]};
+}
+
+// ── CARREGAMENTO ──────────────────────────────────────────────────────────────
+async function carregarBarbeirosAdmin(){
+  const snap = await db.collection('barbeiros').where('ativo','==',true).get();
+  adminState.barbers = snap.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(a.ordem??0)-(b.ordem??0));
+}
+async function carregarGaleriaAdmin(){
+  const snap = await db.collection('galeria').where('ativo','==',true).get();
+  adminState.gallery = snap.docs.map(d=>({id:d.id, ...d.data()})).sort((a,b)=>(a.ordem??0)-(b.ordem??0));
+}
+async function carregarSiteAdmin(){
+  try{
+    const doc = await db.collection('config').doc('site').get();
+    adminState.site = {...siteVazio(), ...(doc.exists ? doc.data() : {})};
+  }catch(e){ adminState.site = siteVazio(); }
+  if(!adminState.site.nome && adminState.admin) adminState.site.nome = adminState.admin.bizName || '';
+  if(!adminState.site.whatsapp && adminState.admin) adminState.site.whatsapp = adminState.admin.phone || '';
+  if(!adminState.site.endereco && adminState.admin) adminState.site.endereco = adminState.admin.addr || '';
+}
+async function carregarExtrasAdmin(){
+  await Promise.all([carregarBarbeirosAdmin(), carregarGaleriaAdmin(), carregarSiteAdmin()]);
+  renderBarbersAdmin(); renderGalleryAdmin(); renderSiteForm(); renderAdminServices(); fillNaBarber();
+}
+
+// ── SERVIÇOS: editar (preço, descrição, o que inclui, inglês) ─────────────────
+const linhas = v => String(v||'').split('\n').map(x=>x.trim()).filter(Boolean);
+function openNewService(){
+  ['nsId','nsIcon','nsName','nsDesc','nsPrice','nsDur','nsIncl','nsNameEn','nsDescEn','nsInclEn'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('svcModalTitle').textContent = '+ Novo Serviço';
+  openModal('newSvc');
+}
+function editService(id){
+  const s = adminState.adminServices.find(x=>x.id===id); if(!s) return;
+  document.getElementById('nsId').value = s.id;
+  document.getElementById('nsIcon').value = s.icon||'';
+  document.getElementById('nsName').value = s.name||'';
+  document.getElementById('nsDesc').value = s.desc||'';
+  document.getElementById('nsPrice').value = s.price??'';
+  document.getElementById('nsDur').value = s.dur??'';
+  document.getElementById('nsIncl').value = (s.inclui||[]).join('\n');
+  document.getElementById('nsNameEn').value = s.name_en||'';
+  document.getElementById('nsDescEn').value = s.desc_en||'';
+  document.getElementById('nsInclEn').value = (s.inclui_en||[]).join('\n');
+  document.getElementById('svcModalTitle').textContent = '✏️ Editar Serviço';
+  openModal('newSvc');
+}
+async function saveService(){
+  const id = document.getElementById('nsId').value;
+  const icon = document.getElementById('nsIcon').value.trim()||'✂';
+  const name = document.getElementById('nsName').value.trim();
+  const desc = document.getElementById('nsDesc').value.trim();
+  const price = parseFloat(String(document.getElementById('nsPrice').value).replace(',','.'))||0;
+  const dur = parseInt(document.getElementById('nsDur').value)||45;
+  if(!name||!price) return toast('Preencha nome e preço', 'error');
+  const data = {icon, name, desc, price, dur,
+    inclui: linhas(document.getElementById('nsIncl').value),
+    name_en: document.getElementById('nsNameEn').value.trim(),
+    desc_en: document.getElementById('nsDescEn').value.trim(),
+    inclui_en: linhas(document.getElementById('nsInclEn').value)};
+  try{
+    if(id) await db.collection('servicos').doc(id).update(data);
+    else await db.collection('servicos').add({...data, ativo:true, ordem: adminState.adminServices.length});
+    await carregarAdminServicos();
+    closeModal('newSvc'); renderAdminServices();
+    toast(id ? 'Serviço atualizado!' : `Serviço "${name}" adicionado!`, 'success');
+  }catch(e){ toast('Erro ao salvar serviço: ' + e.message, 'error'); }
+}
+
+// ── BARBEIROS ─────────────────────────────────────────────────────────────────
+function renderBarbersAdmin(){
+  const g = document.getElementById('barbersAdminGrid'); if(!g) return;
+  g.innerHTML = adminState.barbers.length ? adminState.barbers.map(b=>{
+    const foto = safeImg(b.foto);
+    const dias = (b.dias||[]).slice().sort().map(d=>DIAS_PT[d].slice(0,3)).join(', ') || 'Todos os dias';
+    return `<div class="svc-card">
+      ${foto ? `<img src="${esc(foto)}" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;margin-bottom:10px">` : `<div class="svc-card-icon">💈</div>`}
+      <div class="svc-card-name">${esc(b.nome)}</div>
+      <div style="font-size:12px;color:var(--text2);margin-bottom:6px">${esc(b.especialidade||'')}</div>
+      <div class="svc-card-dur">📅 ${esc(dias)}</div>
+      <div class="svc-card-dur">🕐 ${esc(b.inicio||'—')} – ${esc(b.fim||'—')}</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="status-btn confirm" onclick="openBarberModal('${esc(b.id)}')" style="font-size:11px">✏️ Editar</button>
+        <button class="status-btn cancel" onclick="removeBarbeiro('${esc(b.id)}')" style="font-size:11px">🗑 Remover</button>
+      </div></div>`;
+  }).join('') : '<p style="color:var(--text3);font-size:14px;padding:30px;text-align:center;grid-column:1/-1">Nenhum barbeiro cadastrado. Enquanto não houver, o agendamento funciona sem escolha de profissional.</p>';
+}
+function openBarberModal(id){
+  const b = id ? adminState.barbers.find(x=>x.id===id) : null;
+  document.getElementById('bModalTitle').textContent = b ? '✏️ Editar Barbeiro' : '+ Novo Barbeiro';
+  document.getElementById('bId').value = b?.id || '';
+  document.getElementById('bNome').value = b?.nome || '';
+  document.getElementById('bEsp').value = b?.especialidade || '';
+  document.getElementById('bEspEn').value = b?.especialidade_en || '';
+  document.getElementById('bBio').value = b?.bio || '';
+  document.getElementById('bBioEn').value = b?.bio_en || '';
+  document.getElementById('bIni').value = b?.inicio || '08:00';
+  document.getElementById('bFim').value = b?.fim || '18:00';
+  adminState.barberFoto = b?.foto || '';
+  const prev = document.getElementById('bFotoPrev');
+  prev.style.display = safeImg(adminState.barberFoto) ? 'block' : 'none';
+  prev.src = safeImg(adminState.barberFoto) || '';
+  const dias = b?.dias?.length ? b.dias : [1,2,3,4,5,6];
+  document.getElementById('bDias').innerHTML = DIAS_PT.map((n,i)=>
+    `<label style="display:flex;align-items:center;gap:5px;font-size:13px;padding:7px 10px;border:1px solid var(--border);border-radius:8px;cursor:pointer">
+      <input type="checkbox" value="${i}" ${dias.includes(i)?'checked':''}> ${n.slice(0,3)}</label>`).join('');
+  openModal('barber');
+}
+async function uploadFotoBarbeiro(file){
+  if(!file) return;
+  try{
+    adminState.barberFoto = await comprimirImagem(file, 480, 0.82);
+    const prev = document.getElementById('bFotoPrev'); prev.src = adminState.barberFoto; prev.style.display='block';
+  }catch(e){ toast(e.message,'error'); }
+}
+async function saveBarbeiro(){
+  const id = document.getElementById('bId').value;
+  const nome = document.getElementById('bNome').value.trim();
+  if(!nome) return toast('Digite o nome do barbeiro','error');
+  const dias = [...document.querySelectorAll('#bDias input:checked')].map(i=>Number(i.value));
+  if(!dias.length) return toast('Marque pelo menos um dia de atendimento','error');
+  const ini = document.getElementById('bIni').value, fim = document.getElementById('bFim').value;
+  if(ini && fim && toMin(fim) <= toMin(ini)) return toast('O horário final precisa ser depois do inicial','error');
+  const data = {nome, especialidade: document.getElementById('bEsp').value.trim(),
+    especialidade_en: document.getElementById('bEspEn').value.trim(),
+    bio: document.getElementById('bBio').value.trim(), bio_en: document.getElementById('bBioEn').value.trim(),
+    foto: adminState.barberFoto||'', dias, inicio: ini, fim, ativo:true};
+  try{
+    if(id) await db.collection('barbeiros').doc(id).update(data);
+    else await db.collection('barbeiros').add({...data, ordem: adminState.barbers.length});
+    await carregarBarbeirosAdmin();
+    closeModal('barber'); renderBarbersAdmin(); fillNaBarber();
+    toast('Barbeiro salvo!','success');
+  }catch(e){ toast('Erro ao salvar barbeiro: '+e.message,'error'); }
+}
+async function removeBarbeiro(id){
+  if(!confirm('Remover este barbeiro? Agendamentos já feitos continuam no histórico.')) return;
+  try{
+    await db.collection('barbeiros').doc(id).update({ativo:false});
+    adminState.barbers = adminState.barbers.filter(b=>b.id!==id);
+    renderBarbersAdmin(); fillNaBarber(); toast('Barbeiro removido','info');
+  }catch(e){ toast('Erro: '+e.message,'error'); }
+}
+
+// ── GALERIA ───────────────────────────────────────────────────────────────────
+function renderGalleryAdmin(){
+  const g = document.getElementById('galleryAdminGrid'); if(!g) return;
+  g.innerHTML = adminState.gallery.length ? adminState.gallery.map(x=>`
+    <div class="svc-card" style="padding:12px">
+      <img src="${esc(safeImg(x.url))}" alt="" style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;margin-bottom:8px">
+      <input class="form-input" value="${esc(x.legenda||'')}" placeholder="Legenda (opcional)" style="font-size:12px;padding:8px"
+        onchange="saveLegenda('${esc(x.id)}',this.value)">
+      <button class="status-btn cancel" onclick="removeGaleria('${esc(x.id)}')" style="font-size:11px;margin-top:8px">🗑 Remover</button>
+    </div>`).join('') : '<p style="color:var(--text3);font-size:14px;padding:30px;text-align:center;grid-column:1/-1">Nenhuma foto ainda.</p>';
+}
+async function uploadGaleria(files){
+  const lista = [...files];
+  if(adminState.gallery.length + lista.length > 30) return toast('Limite de 30 fotos na galeria','error');
+  toast(`Enviando ${lista.length} foto(s)...`,'info');
+  for(const f of lista){
+    try{
+      const url = await comprimirImagem(f, 900, 0.78);
+      await db.collection('galeria').add({url, legenda:'', ativo:true, ordem: Date.now()});
+    }catch(e){ toast('Falha em uma foto: '+e.message,'error'); }
+  }
+  await carregarGaleriaAdmin(); renderGalleryAdmin(); toast('Galeria atualizada!','success');
+}
+async function addGaleriaUrl(){
+  const url = safeUrl(document.getElementById('galUrl').value);
+  if(!url) return toast('Cole um link que comece com https://','error');
+  try{
+    await db.collection('galeria').add({url, legenda:'', ativo:true, ordem: Date.now()});
+    document.getElementById('galUrl').value='';
+    await carregarGaleriaAdmin(); renderGalleryAdmin();
+  }catch(e){ toast('Erro: '+e.message,'error'); }
+}
+async function saveLegenda(id, v){
+  try{ await db.collection('galeria').doc(id).update({legenda:v.trim()}); toast('Legenda salva','success'); }
+  catch(e){ toast('Erro: '+e.message,'error'); }
+}
+async function removeGaleria(id){
+  if(!confirm('Remover esta foto da galeria?')) return;
+  try{ await db.collection('galeria').doc(id).update({ativo:false});
+    adminState.gallery = adminState.gallery.filter(x=>x.id!==id); renderGalleryAdmin(); }
+  catch(e){ toast('Erro: '+e.message,'error'); }
+}
+
+// ── CONTEÚDO DO SITE ──────────────────────────────────────────────────────────
+function renderSiteForm(){
+  const s = adminState.site; if(!s) return;
+  const set = (id,v)=>{ const el=document.getElementById(id); if(el) el.value = v ?? ''; };
+  set('stNome', s.nome); set('stCor', s.cor||'#C9A84C'); set('stSlogan', s.slogan); set('stSloganEn', s.slogan_en);
+  set('stWpp', s.whatsapp); set('stInsta', s.instagram); set('stEnd', s.endereco); set('stMaps', s.mapsUrl);
+  set('stAviso', s.avisoHorario); set('stNotaPrecos', s.notaPrecos);
+  set('stNota', s.googleNota); set('stQtd', s.googleQtd); set('stGLink', s.googleReviewUrl);
+  document.getElementById('stIngles').classList.toggle('on', s.ingles !== false);
+  const lp = document.getElementById('stLogoPrev');
+  lp.src = safeImg(s.logo) || ''; lp.style.display = safeImg(s.logo) ? 'block':'none';
+  renderHorariosForm(); renderDatas(); renderDifs(); renderRevs(); renderPlanos(); renderPosts();
+}
+function setS(path, i, k, v){ adminState.site[path][i][k] = v; }
+
+function renderHorariosForm(){
+  const h = adminState.site.horarios;
+  document.getElementById('stHorarios').innerHTML = [1,2,3,4,5,6,0].map(d=>{
+    const x = h[d] || {aberto:false, abre:'08:00', fecha:'18:00'};
+    return `<div style="border-bottom:1px solid var(--border);padding:10px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <strong style="font-size:14px">${DIAS_PT[d]}</strong>
+        <div class="toggle ${x.aberto?'on':''}" onclick="this.classList.toggle('on');adminState.site.horarios[${d}].aberto=this.classList.contains('on')"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+        ${[['abre','Abre'],['fecha','Fecha'],['pausaIni','Pausa de'],['pausaFim','Pausa até']].map(([k,l])=>
+          `<div><div style="font-size:10px;color:var(--text3);margin-bottom:3px">${l}</div>
+           <input class="form-input" type="time" value="${esc(x[k]||'')}" style="padding:8px 6px;font-size:13px"
+             onchange="adminState.site.horarios[${d}].${k}=this.value"></div>`).join('')}
+      </div></div>`;
+  }).join('');
+}
+function addDataFechada(){
+  const v = document.getElementById('stNovaData').value; if(!v) return;
+  const a = adminState.site.datasFechadas; if(!a.includes(v)) a.push(v);
+  a.sort(); document.getElementById('stNovaData').value=''; renderDatas();
+}
+function renderDatas(){
+  const hoje = dateStrLocal();
+  adminState.site.datasFechadas = adminState.site.datasFechadas.filter(d=>d>=hoje); // some as datas passadas
+  document.getElementById('stDatas').innerHTML = adminState.site.datasFechadas.map((d,i)=>
+    `<span class="badge pending" style="cursor:pointer" onclick="adminState.site.datasFechadas.splice(${i},1);renderDatas()">${esc(d.split('-').reverse().join('/'))} ✕</span>`).join('')
+    || '<span style="font-size:12px;color:var(--text3)">Nenhuma data bloqueada.</span>';
+}
+function renderDifs(){
+  document.getElementById('stDifs').innerHTML = adminState.site.diferenciais.map((d,i)=>`
+    <div class="setting-row">
+      <div class="setting-info" style="display:flex;gap:8px;align-items:center;flex:1">
+        <span style="font-size:22px">${esc(d.icon)}</span>
+        <div style="flex:1"><input class="form-input" value="${esc(d.label)}" style="padding:8px;font-size:13px;margin-bottom:4px" oninput="setS('diferenciais',${i},'label',this.value)">
+        <input class="form-input" value="${esc(d.label_en||'')}" placeholder="Inglês (opcional)" style="padding:8px;font-size:12px" oninput="setS('diferenciais',${i},'label_en',this.value)"></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="toggle ${d.ativo?'on':''}" onclick="this.classList.toggle('on');setS('diferenciais',${i},'ativo',this.classList.contains('on'))"></div>
+        <button class="status-btn cancel" onclick="adminState.site.diferenciais.splice(${i},1);renderDifs()">✕</button>
+      </div>
+    </div>`).join('');
+}
+function addDif(){
+  const label = document.getElementById('stDifLabel').value.trim(); if(!label) return;
+  adminState.site.diferenciais.push({icon: document.getElementById('stDifIcon').value.trim()||'✨', label, label_en:'', ativo:true});
+  document.getElementById('stDifLabel').value=''; document.getElementById('stDifIcon').value=''; renderDifs();
+}
+function renderRevs(){
+  document.getElementById('stRevs').innerHTML = adminState.site.avaliacoes.map((r,i)=>`
+    <div style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px">
+      <div class="form-row">
+        <input class="form-input" value="${esc(r.autor||'')}" placeholder="Nome do cliente" oninput="setS('avaliacoes',${i},'autor',this.value)">
+        <select class="form-input" onchange="setS('avaliacoes',${i},'nota',Number(this.value))">
+          ${[5,4,3].map(n=>`<option value="${n}" ${Number(r.nota)===n?'selected':''}>${'★'.repeat(n)}</option>`).join('')}
+        </select>
+      </div>
+      <input class="form-input" value="${esc(r.barbeiro||'')}" placeholder="Barbeiro citado (opcional)" style="margin-top:8px" oninput="setS('avaliacoes',${i},'barbeiro',this.value)">
+      <textarea class="form-input" rows="3" placeholder="Texto da avaliação" style="margin-top:8px" oninput="setS('avaliacoes',${i},'texto',this.value)">${esc(r.texto||'')}</textarea>
+      <button class="status-btn cancel" onclick="adminState.site.avaliacoes.splice(${i},1);renderRevs()" style="margin-top:8px">🗑 Remover</button>
+    </div>`).join('');
+}
+function addRev(){ adminState.site.avaliacoes.push({autor:'', nota:5, texto:'', barbeiro:''}); renderRevs(); }
+function renderPlanos(){
+  document.getElementById('stPlanos').innerHTML = adminState.site.planos.map((p,i)=>`
+    <div style="border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px">
+      <div class="form-row">
+        <input class="form-input" value="${esc(p.nome||'')}" placeholder="Nome do plano (ex: Clube Corte Ilimitado)" oninput="setS('planos',${i},'nome',this.value)">
+        <input class="form-input" type="number" value="${esc(p.preco??'')}" placeholder="Preço mensal (R$)" oninput="setS('planos',${i},'preco',parseFloat(this.value)||0)">
+      </div>
+      <input class="form-input" value="${esc(p.desc||'')}" placeholder="Descrição curta" style="margin-top:8px" oninput="setS('planos',${i},'desc',this.value)">
+      <textarea class="form-input" rows="3" placeholder="O que inclui (um item por linha)" style="margin-top:8px" oninput="adminState.site.planos[${i}].inclui=linhas(this.value)">${esc((p.inclui||[]).join('\n'))}</textarea>
+      <div class="form-row" style="margin-top:8px">
+        <input class="form-input" value="${esc(p.nome_en||'')}" placeholder="Nome em inglês (opcional)" oninput="setS('planos',${i},'nome_en',this.value)">
+        <input class="form-input" value="${esc(p.desc_en||'')}" placeholder="Descrição em inglês (opcional)" oninput="setS('planos',${i},'desc_en',this.value)">
+      </div>
+      <textarea class="form-input" rows="2" placeholder="Itens em inglês (um por linha, opcional)" style="margin-top:8px" oninput="adminState.site.planos[${i}].inclui_en=linhas(this.value)">${esc((p.inclui_en||[]).join('\n'))}</textarea>
+      <button class="status-btn cancel" onclick="adminState.site.planos.splice(${i},1);renderPlanos()" style="margin-top:8px">🗑 Remover plano</button>
+    </div>`).join('');
+}
+function addPlano(){ adminState.site.planos.push({nome:'', preco:0, desc:'', inclui:[]}); renderPlanos(); }
+function renderPosts(){
+  document.getElementById('stPosts').innerHTML = adminState.site.instaPosts.map((u,i)=>`
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <input class="form-input" value="${esc(u)}" placeholder="https://www.instagram.com/p/..." oninput="adminState.site.instaPosts[${i}]=this.value">
+      <button class="status-btn cancel" onclick="adminState.site.instaPosts.splice(${i},1);renderPosts()">✕</button>
+    </div>`).join('');
+}
+function addPost(){ if(adminState.site.instaPosts.length>=6) return toast('Máximo de 6 posts','error'); adminState.site.instaPosts.push(''); renderPosts(); }
+
+async function uploadLogo(file){
+  if(!file) return;
+  try{
+    adminState.site.logo = await comprimirImagem(file, 320, 0.85);
+    const lp = document.getElementById('stLogoPrev'); lp.src = adminState.site.logo; lp.style.display='block';
+  }catch(e){ toast(e.message,'error'); }
+}
+function removerLogo(){ adminState.site.logo=''; document.getElementById('stLogoPrev').style.display='none'; }
+
+async function saveSite(){
+  const s = adminState.site; const v = id => document.getElementById(id).value.trim();
+  s.nome = v('stNome'); s.cor = document.getElementById('stCor').value; s.slogan = v('stSlogan'); s.slogan_en = v('stSloganEn');
+  s.ingles = document.getElementById('stIngles').classList.contains('on');
+  s.whatsapp = v('stWpp').replace(/\D/g,''); s.instagram = instaHandle(v('stInsta'));
+  s.endereco = v('stEnd'); s.avisoHorario = v('stAviso'); s.notaPrecos = v('stNotaPrecos');
+  s.mapsUrl = safeUrl(v('stMaps')); s.googleReviewUrl = safeUrl(v('stGLink'));
+  s.googleNota = v('stNota'); s.googleQtd = v('stQtd');
+  if(v('stMaps') && !s.mapsUrl) return toast('O link do Maps precisa começar com https://','error');
+  if(v('stGLink') && !s.googleReviewUrl) return toast('O link do Google precisa começar com https://','error');
+  if(v('stInsta') && !s.instagram) return toast('Instagram inválido. Use só o @usuario','error');
+  s.avaliacoes = s.avaliacoes.filter(r=>r.texto && r.texto.trim());
+  s.planos = s.planos.filter(p=>p.nome && p.nome.trim());
+  s.instaPosts = s.instaPosts.map(u=>u.trim()).filter(u=>instaPostCode(u));
+  try{
+    await db.collection('config').doc('site').set(s);
+    // mantém o número usado nas confirmações em sincronia com o botão de WhatsApp
+    if(s.whatsapp) await db.collection('config').doc('geral').set({adminPhone: s.whatsapp}, {merge:true});
+    renderSiteForm();
+    toast('Site atualizado! Já está valendo para os clientes.','success');
+  }catch(e){ toast('Erro ao salvar: '+e.message,'error'); }
+}
+
+// ── AGENDAMENTO MANUAL COM BARBEIRO ───────────────────────────────────────────
+function fillNaBarber(){
+  const wrap = document.getElementById('naBarberWrap'); if(!wrap) return;
+  wrap.style.display = adminState.barbers.length ? '' : 'none';
+  document.getElementById('naBarber').innerHTML = '<option value="">Selecionar barbeiro</option>' +
+    adminState.barbers.map(b=>`<option value="${esc(b.id)}">${esc(b.nome)}</option>`).join('');
+}
+
+
+// Mostra "Aguarde..." ao tocar e avisa se o servidor não responder (evita botão "mudo")
+function vigiaRede(){
+  toast('Aguarde...', 'info');
+  const id = setTimeout(()=>toast('Sem resposta do servidor. Desative bloqueador de anúncios/economia de dados e tente de novo.', 'error'), 12000);
+  return ()=>clearTimeout(id);
+}
+function comVigia(fn){ return async function(...a){ const fim = vigiaRede(); try{ return await fn.apply(this,a); } finally{ fim(); } }; }
+const adminLogin = comVigia(_adminLogin);
+const adminRegister = comVigia(_adminRegister);
+
+
+// Redefinição de senha do proprietário: o Firebase envia um e-mail com o link para criar uma senha nova
+async function adminEsqueciSenha(){
+  const email = document.getElementById('aLoginEmail').value.trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return toast('Digite seu e-mail no campo acima e toque em "Esqueci minha senha" de novo.', 'error');
+  try{
+    auth.languageCode = 'pt-BR';
+    await auth.sendPasswordResetEmail(email);
+    toast('Enviamos um link para redefinir a senha. Confira seu e-mail (e a caixa de spam).', 'success');
+  }catch(e){
+    if(e.code==='auth/user-not-found') toast('Enviamos um link para redefinir a senha. Confira seu e-mail (e a caixa de spam).', 'success');
+    else toast('Não foi possível enviar o e-mail de redefinição. ['+(e.code||e.message)+']', 'error');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+// Mantém a sessão do admin entre visitas (Firebase Auth cuida da persistência)
+auth.onAuthStateChanged(async (fbUser)=>{
+  if(fbUser && !adminState.admin){
+    try{
+      const doc = await db.collection('admins').doc(fbUser.uid).get();
+      if(doc.exists){
+        adminState.admin = {uid: fbUser.uid, ...doc.data()};
+        initAdminApp();
+      }
+    }catch(e){ console.error('Sessão:', e); }
+  }
+});
+</script>
+<script src="admin-perfil.js"></script>
+<script>
+  if('serviceWorker' in navigator){
+    window.addEventListener('load', ()=> navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+</script>
+</body>
+</html>
